@@ -1,7 +1,6 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
 
 from authentication.models import User
 from authentication.serializers import UserModelSerializer, UserUpdateSerializer, ChangePasswordSerializer
