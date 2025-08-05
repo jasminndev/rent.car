@@ -1,5 +1,5 @@
 from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DecimalField
-from django.db.models.fields import CharField, DateField, IntegerField, TimeField
+from django.db.models.fields import CharField, DateField, IntegerField, TimeField, DateTimeField
 
 from authentication.models import User
 
@@ -16,6 +16,7 @@ class Payment(Model):
     cvv = CharField(max_length=4)
     card_type = CharField(max_length=10, choices=CardType.choices, default=CardType.VISA)
     user = ForeignKey(User, on_delete=CASCADE)
+    created_at = DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.card_type} - {self.card_holder}'
@@ -52,7 +53,6 @@ class Car(Model):
 class CarImages(Model):
     images = ImageField(upload_to='car/%Y/%m/%d/')
     car = ForeignKey(Car, on_delete=CASCADE)
-
 
 
 class Review(Model):
