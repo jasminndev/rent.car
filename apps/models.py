@@ -1,8 +1,6 @@
 from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DecimalField
 from django.db.models.fields import CharField, DateField, IntegerField, TimeField, DateTimeField
 
-from authentication.models import User
-
 
 class Payment(Model):
     class CardType(TextChoices):
@@ -15,7 +13,7 @@ class Payment(Model):
     card_holder = CharField(max_length=50)
     cvv = CharField(max_length=4)
     card_type = CharField(max_length=10, choices=CardType.choices, default=CardType.VISA)
-    user = ForeignKey(User, on_delete=CASCADE)
+    user = ForeignKey('authentication.User', on_delete=CASCADE)
     created_at = DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -42,7 +40,7 @@ class Car(Model):
 
     name = CharField(max_length=50)
     description = TextField()
-    category = ForeignKey(Category, on_delete=CASCADE)
+    category = ForeignKey('apps.Category', on_delete=CASCADE)
     capacity = CharField(max_length=10, choices=CapacityType.choices, default=CapacityType.TWO)
     steering = CharField(max_length=15, choices=SteeringType.choices, default=SteeringType.MANUAL)
     gasoline = CharField(max_length=255)
@@ -52,7 +50,7 @@ class Car(Model):
 
 class CarImages(Model):
     images = ImageField(upload_to='car/%Y/%m/%d/')
-    car = ForeignKey(Car, on_delete=CASCADE)
+    car = ForeignKey('apps.Car', on_delete=CASCADE)
 
 
 class Review(Model):
@@ -64,10 +62,10 @@ class Review(Model):
         ONE = '1', 'One'
 
     stars = CharField(max_length=10, choices=StarsNumber.choices, default=StarsNumber.ONE)
-    user = ForeignKey(User, on_delete=CASCADE)
+    user = ForeignKey('authentication.User', on_delete=CASCADE)
     text = TextField()
     rating = IntegerField()
-    car = ForeignKey(Car, on_delete=CASCADE)
+    car = ForeignKey('apps.Car', on_delete=CASCADE)
 
 
 class PickUp(Model):
@@ -81,7 +79,7 @@ class PickUp(Model):
     location = CharField(max_length=50, choices=LocationType.choices)
     date = DateField()
     time = TimeField()
-    user = ForeignKey(User, on_delete=CASCADE)
+    user = ForeignKey('authentication.User', on_delete=CASCADE)
 
 
 class DropOff(Model):
@@ -95,4 +93,4 @@ class DropOff(Model):
     location = CharField(max_length=50, choices=LocationType.choices)
     date = DateField()
     time = TimeField()
-    user = ForeignKey(User, on_delete=CASCADE)
+    user = ForeignKey('authentication.User', on_delete=CASCADE)

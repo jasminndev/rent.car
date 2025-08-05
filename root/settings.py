@@ -1,3 +1,5 @@
+from datetime import timedelta
+from os.path import join
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,7 +19,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
     # my apps
-
+    'authentication',
+    'apps',
     # DRF
     'rest_framework',
     'drf_spectacular',
@@ -81,13 +84,19 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tashkent'
 
 USE_I18N = True
 
 USE_TZ = True
 
+AUTH_USER_MODEL = 'authentication.User'
+
 STATIC_URL = 'static/'
+STATIC_ROOT = join(BASE_DIR / 'static')
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = join(BASE_DIR / 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -108,4 +117,20 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
+}
+
+UNFOLD = {
+    "SITE_TITLE": "My Admin Dashboard",
+    "SITE_HEADER": "My Admin Panel",
+    "SHOW_HISTORY": True,
+    "DARK_MODE": True,
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+    }
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=20),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
