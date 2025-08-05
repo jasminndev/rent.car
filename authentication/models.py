@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager, AbstractUser
 from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DecimalField
-from django.db.models.fields import CharField, DateField, IntegerField, TimeField
+from django.db.models.fields import CharField, DateField, IntegerField, TimeField, DateTimeField
 
 
 class CustomUserManager(UserManager):
@@ -51,11 +51,14 @@ class User(AbstractUser):
     first_name = CharField(max_length=35)
     last_name = CharField(max_length=35)
     avatar = ImageField(upload_to='avatars/%Y/%m/%d/', null=True, blank=True)
-    phone_number = CharField(max_length=20)
+    phone_number = CharField(max_length=20, unique=True)
     address = CharField(max_length=255)
     city = CharField(max_length=50)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
+    objects = CustomUserManager()
     USERNAME_FIELD = 'phone_number'
-    REQUIRED_FIELDS = ['phone_number', 'address', 'city']
+    REQUIRED_FIELDS = []
 
 
 class Payment(Model):
