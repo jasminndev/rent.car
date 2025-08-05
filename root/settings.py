@@ -112,8 +112,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Education API',
-    'DESCRIPTION': 'Education',
+    'TITLE': 'Rent Car API',
+    'DESCRIPTION': 'Rent Car',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
