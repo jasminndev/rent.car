@@ -10,7 +10,7 @@ from authentication.models import User
 class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = 'first_name', 'last_name', 'phone_number', 'address', 'city', 'avatar', 'password',
+        fields = ('first_name', 'last_name', 'phone_number', 'address', 'city', 'avatar', 'password')
 
     def validate_phone_number(self, value):
         phone = re.sub('\D', '', value)
@@ -52,7 +52,7 @@ class UserModelSerializer(ModelSerializer):
 class UserUpdateSerializer(UserModelSerializer):
     class Meta:
         model = User
-        fields = 'first_name', 'last_name', 'avatar', 'address', 'city',
+        fields = ('first_name', 'last_name', 'avatar', 'address', 'city')
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
