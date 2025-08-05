@@ -14,6 +14,7 @@ class Payment(Model):
     cvv = CharField(max_length=4)
     card_type = CharField(max_length=10, choices=CardType.choices, default=CardType.VISA)
     user = ForeignKey('authentication.User', on_delete=CASCADE)
+    created_at = DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.card_type} - {self.card_holder}'
