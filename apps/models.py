@@ -1,4 +1,4 @@
-from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DecimalField
+from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DecimalField, DateTimeField
 from django.db.models.fields import CharField, DateField, IntegerField, TimeField
 
 
