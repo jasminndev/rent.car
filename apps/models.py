@@ -94,3 +94,11 @@ class DropOff(Model):
     date = DateField()
     time = TimeField()
     user = ForeignKey('authentication.User', on_delete=CASCADE)
+
+
+class Wishlist(Model):
+    user = ForeignKey('authentication.User', on_delete=CASCADE)
+    car = ForeignKey('apps.Car', on_delete=CASCADE)
+
+    def __str__(self):
+        return f'{self.user.first_name} - {self.user.last_name} wishlist'

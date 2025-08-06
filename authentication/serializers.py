@@ -4,13 +4,13 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
 from rest_framework.serializers import ModelSerializer, Serializer
 
-from authentication.models import User
+from authentication.models import User, Wishlist
 
 
 class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'phone_number', 'address', 'city', 'avatar', 'password')
+        fields = ('first_name', 'last_name', 'phone_number', 'address', 'city', 'avatar', 'password',)
 
     def validate_phone_number(self, value):
         phone = re.sub('\D', '', value)
@@ -52,7 +52,7 @@ class UserModelSerializer(ModelSerializer):
 class UserUpdateSerializer(UserModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'avatar', 'address', 'city')
+        fields = ('first_name', 'last_name', 'avatar', 'address', 'city',)
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
