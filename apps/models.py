@@ -12,7 +12,7 @@ class Payment(Model):
     expiration_date = DateField()
     card_holder = CharField(max_length=50)
     cvv = CharField(max_length=4)
-    card_type = CharField(max_length=10, choices=CardType.choices, default=CardType.VISA)
+    card_type = CharField(max_length=10, choices=CardType.choices)
     user = ForeignKey('authentication.User', on_delete=CASCADE)
     created_at = DateTimeField(auto_now_add=True)
 
@@ -43,8 +43,8 @@ class Car(Model):
     name = CharField(max_length=50)
     description = TextField()
     category = ForeignKey('apps.Category', on_delete=CASCADE)
-    capacity = CharField(max_length=10, choices=CapacityType.choices, default=CapacityType.TWO)
-    steering = CharField(max_length=15, choices=SteeringType.choices, default=SteeringType.MANUAL)
+    capacity = CharField(max_length=10, choices=CapacityType.choices)
+    steering = CharField(max_length=15, choices=SteeringType.choices)
     gasoline = CharField(max_length=255)
     price = DecimalField(max_digits=10, decimal_places=2)
     main_image = ImageField(upload_to='main_image/%Y/%m/%d/')
@@ -55,6 +55,8 @@ class Car(Model):
 class CarImages(Model):
     images = ImageField(upload_to='car/%Y/%m/%d/')
     car = ForeignKey('apps.Car', on_delete=CASCADE)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
 
 class Review(Model):
@@ -65,11 +67,12 @@ class Review(Model):
         TWO = '2', 'Two'
         ONE = '1', 'One'
 
-    stars = CharField(max_length=10, choices=StarsNumber.choices, default=StarsNumber.ONE)
+    stars = CharField(max_length=10, choices=StarsNumber.choices)
     user = ForeignKey('authentication.User', on_delete=CASCADE)
     text = TextField()
-    rating = IntegerField()
     car = ForeignKey('apps.Car', on_delete=CASCADE)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
 
 class PickUp(Model):
@@ -103,6 +106,7 @@ class DropOff(Model):
 class Wishlist(Model):
     user = ForeignKey('authentication.User', on_delete=CASCADE)
     car = ForeignKey('apps.Car', on_delete=CASCADE)
+    created_at = DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.user.first_name} - {self.user.last_name} wishlist'

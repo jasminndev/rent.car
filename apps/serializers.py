@@ -40,11 +40,15 @@ class CarModelSerializer(ModelSerializer):
         fields = ('name', 'description', 'category', 'capacity', 'steering', 'gasoline', 'price', 'main_image')
         read_only_fields = ('id', 'created_at', 'updated_at')
 
+    def validate_price(self, value):
+        if value < 0:
+            return ValidationError('The car price cannot be negative!')
+
 
 class ReviewModelSerializer(ModelSerializer):
     class Meta:
         model = Review
-        fields = ('stars', 'user', 'text', 'rating', 'car')
+        fields = ('stars', 'user', 'text', 'car')
 
 
 class PickUpModelSerializer(ModelSerializer):
