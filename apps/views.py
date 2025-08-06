@@ -4,8 +4,9 @@ from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, 
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from apps.filter import CarFilter
-from apps.models import Car, Category
-from apps.serializers import CarModelSerializer, CategoryModelSerializer
+from apps.models import Car, Category, Review, PickUp, DropOff
+from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, PickUpModelSerializer, \
+    DropOffModelSerializer
 
 
 @extend_schema(tags=['category'])
@@ -82,4 +83,56 @@ class CarUpdateAPIView(UpdateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarModelSerializer
     permission_classes = [IsAdminUser]
+    lookup_field = 'pk'
+
+
+@extend_schema(tags=['review'])
+class ReviewCreateAPIView(CreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewModelSerializer
+    permission_classes = [IsAdminUser, IsAuthenticated]
+
+
+@extend_schema(tags=['review'])
+class ReviewUpdateAPIView(UpdateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewModelSerializer
+    permission_classes = [IsAdminUser, IsAuthenticated]
+    lookup_field = 'pk'
+
+
+@extend_schema(tags=['review'])
+class ReviewDeleteAPIView(DestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewModelSerializer
+    permission_classes = [IsAdminUser, IsAuthenticated]
+
+
+@extend_schema(tags=['pickup'])
+class PickUpCreateAPIView(CreateAPIView):
+    queryset = PickUp.objects.all()
+    serializer_class = PickUpModelSerializer
+    permission_classes = [IsAdminUser, IsAuthenticated]
+
+
+@extend_schema(tags=['pickup'])
+class PickUpUpdateAPIView(UpdateAPIView):
+    queryset = PickUp.objects.all()
+    serializer_class = PickUpModelSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'pk'
+
+
+@extend_schema(tags=['dropoff'])
+class DropOffCreateAPIView(CreateAPIView):
+    queryset = DropOff.objects.all()
+    serializer_class = DropOffModelSerializer
+    permission_classes = [IsAuthenticated]
+
+
+@extend_schema(tags=['dropoff'])
+class DropOffUpdateAPIView(UpdateAPIView):
+    queryset = DropOff.objects.all()
+    serializer_class = DropOffModelSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = 'pk'
