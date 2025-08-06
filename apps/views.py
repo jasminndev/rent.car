@@ -2,8 +2,8 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
-from apps.models import Car, Category
-from apps.serializers import CarModelSerializer, CategoryModelSerializer
+from apps.models import Car, Category, Wishlist
+from apps.serializers import CarModelSerializer, CategoryModelSerializer, WishlistModelSerializer
 
 
 @extend_schema(tags=['category'])

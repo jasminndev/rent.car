@@ -1,6 +1,6 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager, AbstractUser
-from django.db.models import ImageField, Model, DateTimeField
+from django.db.models import ImageField, Model, DateTimeField, ForeignKey, CASCADE
 from django.db.models.fields import CharField
 
 from apps.models import Car
@@ -66,3 +66,12 @@ class User(AbstractUser):
     email = None
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
+
+
+class Wishlist(Model):
+    user = ForeignKey('authentication.User', on_delete=CASCADE)
+    car = ForeignKey('apps.Car', on_delete=CASCADE)
+    created_at = DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.first_name} - {self.user.last_name} wishlist'

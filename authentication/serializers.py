@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
 from rest_framework.serializers import ModelSerializer, Serializer
 
-from authentication.models import User
+from authentication.models import User, Wishlist
 
 
 class UserModelSerializer(ModelSerializer):
@@ -94,3 +94,10 @@ class ChangePasswordSerializer(Serializer):
         user.set_password(self.validated_data['new_password'])
         user.save()
         return user
+
+
+class WishlistModelSerializer(ModelSerializer):
+    class Meta:
+        model = Wishlist
+        fields = ('user', 'car',)
+        read_only_fields = ('id',)

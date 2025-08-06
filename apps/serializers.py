@@ -3,7 +3,7 @@ from datetime import date
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
-from apps.models import Payment, Category, Car, Review, PickUp, DropOff, Wishlist
+from apps.models import Payment, Category, Car, Review, PickUp, DropOff
 
 
 class PaymentModelSerializer(ModelSerializer):
@@ -63,10 +63,3 @@ class DropOffModelSerializer(ModelSerializer):
         model = DropOff
         fields = ('location', 'user')
         read_only_fields = ('id', 'date', 'time')
-
-
-class WishlistModelSerializer(ModelSerializer):
-    class Meta:
-        model = Wishlist
-        fields = ('user', 'car',)
-        read_only_fields = ('id',)
