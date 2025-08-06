@@ -2,8 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from authentication.views import UserCreateAPIView, UserUpdateAPIView, ChangePasswordAPIView, UserRetrieveAPIView, \
-    UserDeleteAPIView, UserListAPIView, WishlistCreateAPIView, WishlistDeleteAPIView, WishlistDetailAPIView, \
-    WishlistListAPIView
+    UserDeleteAPIView, UserListAPIView, WishlistCreateAPIView, WishlistDeleteAPIView, WishlistListAPIView
 
 urlpatterns = [
     path('user-create', UserCreateAPIView.as_view()),
@@ -14,7 +13,6 @@ urlpatterns = [
     path('user-delete/<int:pk>', UserDeleteAPIView.as_view()),
     path('wishlist-create', WishlistCreateAPIView.as_view()),
     path('wishlist-delete/<int:pk>', WishlistDeleteAPIView.as_view()),
-    path('wishlist-detail/<int:pk>', WishlistDetailAPIView.as_view()),
     path('wishlists', WishlistListAPIView.as_view()),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

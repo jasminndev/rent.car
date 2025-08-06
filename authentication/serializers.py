@@ -2,8 +2,11 @@ import re
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
+from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, Serializer
 
+from apps.models import Car
+from apps.serializers import CarModelSerializer
 from authentication.models import User, Wishlist
 
 
@@ -97,7 +100,15 @@ class ChangePasswordSerializer(Serializer):
 
 
 class WishlistModelSerializer(ModelSerializer):
+    car = CarModelSerializer(read_only=True)
+    car_id = PrimaryKeyRelatedField(queryset=Car.objects.all(), write_only=True)
+
     class Meta:
         model = Wishlist
-        fields = ('user', 'car',)
-        read_only_fields = ('id',)
+        fields = ('user', 'car', 'car_id')
+        read_only_fields = ('id', 'car')
+
+    def create(self, validated_data):
+        car = validated_data.pop('car_id')
+        validated_data['car'] = car
+        return super().create(validated_data)

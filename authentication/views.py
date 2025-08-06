@@ -1,6 +1,6 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 
 from authentication.models import User, Wishlist
 from authentication.serializers import UserModelSerializer, UserUpdateSerializer, ChangePasswordSerializer, \
@@ -54,27 +54,29 @@ class UserDeleteAPIView(DestroyAPIView):
 class WishlistCreateAPIView(CreateAPIView):
     serializer_class = WishlistModelSerializer
     queryset = Wishlist.objects.all()
-    permission_classes = [IsAdminUser, IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Wishlist.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 @extend_schema(tags=['wishlist'])
 class WishlistListAPIView(ListAPIView):
-    queryset = Wishlist.objects.all()
     serializer_class = WishlistModelSerializer
-    permission_classes = [IsAdminUser, IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Wishlist.objects.filter(user=self.request.user).select_related('car').order_by('-created_at')
 
 
 @extend_schema(tags=['wishlist'])
 class WishlistDeleteAPIView(DestroyAPIView):
-    queryset = Wishlist.objects.all()
     serializer_class = WishlistModelSerializer
-    permission_classes = [IsAdminUser, IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     lookup_field = 'pk'
 
-
-@extend_schema(tags=['wishlist'])
-class WishlistDetailAPIView(RetrieveAPIView):
-    queryset = Wishlist.objects.all()
-    serializer_class = WishlistModelSerializer
-    permission_classes = [IsAdminUser, IsAuthenticated]
-    lookup_field = 'pk'
+    def get_queryset(self):
+        return Wishlist.objects.filter(user=self.request.user)

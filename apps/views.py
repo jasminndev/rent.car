@@ -1,9 +1,11 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
-from apps.models import Car, Category, Wishlist
-from apps.serializers import CarModelSerializer, CategoryModelSerializer, WishlistModelSerializer
+from apps.filter import CarFilter
+from apps.models import Car, Category
+from apps.serializers import CarModelSerializer, CategoryModelSerializer
 
 
 @extend_schema(tags=['category'])
@@ -54,7 +56,9 @@ class CarCreateAPIView(CreateAPIView):
 class CarListAPIView(ListAPIView):
     queryset = Car.objects.all()
     serializer_class = CarModelSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CarFilter
 
 
 @extend_schema(tags=['car'])

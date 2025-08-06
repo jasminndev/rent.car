@@ -26,6 +26,10 @@ class Category(Model):
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
+    @property
+    def total_cars(self):
+        return self.car_set.count()
+
 
 class Car(Model):
     class CapacityType(TextChoices):
@@ -46,7 +50,7 @@ class Car(Model):
     capacity = CharField(max_length=10, choices=CapacityType.choices)
     steering = CharField(max_length=15, choices=SteeringType.choices)
     gasoline = CharField(max_length=255)
-    price = DecimalField(max_digits=10, decimal_places=2)
+    price = DecimalField(max_digits=10, decimal_places=2, default=0)
     main_image = ImageField(upload_to='main_image/%Y/%m/%d/')
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)

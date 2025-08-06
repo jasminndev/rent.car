@@ -43,6 +43,7 @@ class CarModelSerializer(ModelSerializer):
     def validate_price(self, value):
         if value < 0:
             return ValidationError('The car price cannot be negative!')
+        return value
 
 
 class ReviewModelSerializer(ModelSerializer):
