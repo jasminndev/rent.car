@@ -22,7 +22,9 @@ class Payment(Model):
 
 class Category(Model):
     name = CharField(max_length=255)
-    car_amount = IntegerField()
+    car_amount = IntegerField(default=0)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
 
 class Car(Model):
@@ -30,7 +32,7 @@ class Car(Model):
         TWO = '2', '2'
         FOUR = '4', '4'
         SIX = '6', '6'
-        EIGHT = '8', '8'
+        EIGHT_OR_MORE = '8 or more', '8 OR MORE'
 
     class SteeringType(TextChoices):
         MANUAL = 'Manual', 'manual'
@@ -46,6 +48,8 @@ class Car(Model):
     gasoline = CharField(max_length=255)
     price = DecimalField(max_digits=10, decimal_places=2)
     main_image = ImageField(upload_to='main_image/%Y/%m/%d/')
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
 
 class CarImages(Model):
