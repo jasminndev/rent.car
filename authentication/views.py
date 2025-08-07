@@ -80,3 +80,13 @@ class WishlistDeleteAPIView(DestroyAPIView):
 
     def get_queryset(self):
         return Wishlist.objects.filter(user=self.request.user)
+
+
+@extend_schema(tags=['wishlist'])
+class WishlistRetrieveAPIView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = WishlistModelSerializer
+    lookup_field = 'pk'
+
+    def get_queryset(self):
+        return Wishlist.objects.filter(user=self.request.user)
