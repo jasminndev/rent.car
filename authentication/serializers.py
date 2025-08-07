@@ -6,7 +6,6 @@ from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, Serializer
 
 from apps.models import Car
-from apps.serializers import CarModelSerializer
 from authentication.models import User, Wishlist
 
 
@@ -100,6 +99,7 @@ class ChangePasswordSerializer(Serializer):
 
 
 class WishlistModelSerializer(ModelSerializer):
+    from apps.serializers import CarModelSerializer
     car = CarModelSerializer(read_only=True)
     car_id = PrimaryKeyRelatedField(queryset=Car.objects.all(), write_only=True)
 

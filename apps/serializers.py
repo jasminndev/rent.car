@@ -4,6 +4,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
 from apps.models import Payment, Category, Car, Review, PickUp, DropOff
+from authentication.serializers import UserModelSerializer
 
 
 class PaymentModelSerializer(ModelSerializer):
@@ -34,22 +35,43 @@ class CategoryModelSerializer(ModelSerializer):
             return ValidationError('The card amount cannot be negative!')
 
 
+class ReviewModelSerializer(ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ('stars', 'text')
+        read_only_fields = ('id', 'created_at', 'updated_at', 'user')
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['user'] = UserModelSerializer(instance.user).data if instance.user else None
+        return data
+
+
 class CarModelSerializer(ModelSerializer):
+    reviews = ReviewModelSerializer(many=True, read_only=True)
+
     class Meta:
         model = Car
-        fields = ('name', 'description', 'category', 'capacity', 'steering', 'gasoline', 'price', 'main_image')
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        fields = (
+            'name', 'description', 'category', 'capacity', 'steering', 'gasoline', 'price', 'main_image', 'reviews')
+        read_only_fields = ('id', 'created_at', 'updated_at',)
 
     def validate_price(self, value):
         if value < 0:
             return ValidationError('The car price cannot be negative!')
         return value
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['reviews'] = ReviewModelSerializer(instance.reviews.all(), many=True).data if instance.reviews else None
+        return data
 
-class ReviewModelSerializer(ModelSerializer):
+
+class ReviewUpdateModelSerializer(ReviewModelSerializer):
     class Meta:
         model = Review
-        fields = ('stars', 'user', 'text', 'car')
+        fields = ('text',)
+        read_only_fields = ('id', 'stars', 'user', 'car', 'created_at', 'updated_at',)
 
 
 class PickUpModelSerializer(ModelSerializer):

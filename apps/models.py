@@ -13,7 +13,7 @@ class Payment(Model):
     card_holder = CharField(max_length=50)
     cvv = CharField(max_length=4)
     card_type = CharField(max_length=10, choices=CardType.choices)
-    user = ForeignKey('authentication.User', on_delete=CASCADE)
+    user = ForeignKey('authentication.User', on_delete=CASCADE, related_name='payments')
     created_at = DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -72,9 +72,9 @@ class Review(Model):
         ONE = '1', 'One'
 
     stars = CharField(max_length=10, choices=StarsNumber.choices)
-    user = ForeignKey('authentication.User', on_delete=CASCADE)
+    user = ForeignKey('authentication.User', on_delete=CASCADE, related_name='reviews')
     text = TextField()
-    car = ForeignKey('apps.Car', on_delete=CASCADE)
+    car = ForeignKey('apps.Car', on_delete=CASCADE, related_name='reviews')
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
@@ -90,7 +90,7 @@ class PickUp(Model):
     location = CharField(max_length=50, choices=LocationType.choices)
     date = DateField()
     time = TimeField()
-    user = ForeignKey('authentication.User', on_delete=CASCADE)
+    user = ForeignKey('authentication.User', on_delete=CASCADE, related_name='pick_ups')
 
 
 class DropOff(Model):
@@ -104,4 +104,4 @@ class DropOff(Model):
     location = CharField(max_length=50, choices=LocationType.choices)
     date = DateField()
     time = TimeField()
-    user = ForeignKey('authentication.User', on_delete=CASCADE)
+    user = ForeignKey('authentication.User', on_delete=CASCADE, related_name='drop_offs')
