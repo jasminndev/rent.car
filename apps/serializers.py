@@ -1,5 +1,4 @@
 from datetime import date
-from unicodedata import category
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
