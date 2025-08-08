@@ -77,12 +77,12 @@ class ReviewUpdateModelSerializer(ReviewModelSerializer):
 class PickUpModelSerializer(ModelSerializer):
     class Meta:
         model = PickUp
-        fields = ('location', 'user')
-        read_only_fields = ('id', 'date', 'time')
+        fields = ('location', 'user', 'date', 'time')
+        read_only_fields = ('id',)
 
 
 class DropOffModelSerializer(ModelSerializer):
     class Meta:
         model = DropOff
-        fields = ('location', 'user')
-        read_only_fields = ('id', 'date', 'time')
+        fields = ('location', 'user', 'date', 'time')
+        read_only_fields = ('id',)

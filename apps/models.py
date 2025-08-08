@@ -26,10 +26,6 @@ class Category(Model):
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
-    @property
-    def total_cars(self):
-        return self.car_set.count()
-
 
 class Car(Model):
     class CapacityType(TextChoices):
@@ -46,7 +42,7 @@ class Car(Model):
 
     name = CharField(max_length=50)
     description = TextField()
-    category = ForeignKey('apps.Category', on_delete=CASCADE)
+    category = ForeignKey('apps.Category', on_delete=CASCADE, related_name='cars')
     capacity = CharField(max_length=10, choices=CapacityType.choices)
     steering = CharField(max_length=15, choices=SteeringType.choices)
     gasoline = CharField(max_length=255)
