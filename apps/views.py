@@ -55,8 +55,6 @@ class CarListAPIView(ListAPIView):
     filterset_class = CarFilter
 
 
-
-
 @extend_schema(tags=['car'])
 class CarDeleteAPIView(DestroyAPIView):
     queryset = Car.objects.all()
