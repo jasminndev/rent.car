@@ -1,12 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 
 from apps.filter import CarFilter
-from apps.models import Car, Category, Review, PickUp, DropOff
+from apps.models import Car, Category, Review, PickUp, DropOff, Payment
 from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, PickUpModelSerializer, \
-    DropOffModelSerializer, ReviewUpdateModelSerializer
+    DropOffModelSerializer, ReviewUpdateModelSerializer, PaymentModelSerializer
 
 
 @extend_schema(tags=['category'])
@@ -51,8 +52,9 @@ class CarListAPIView(ListAPIView):
     queryset = Car.objects.all()
     serializer_class = CarModelSerializer
     permission_classes = [AllowAny]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = CarFilter
+    search_fields = ['name']
 
 
 @extend_schema(tags=['car'])
@@ -145,3 +147,10 @@ class DropOffUpdateAPIView(UpdateAPIView):
     serializer_class = DropOffModelSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = 'pk'
+
+
+@extend_schema(tags=['payment'])
+class PaymentCreateAPIView(CreateAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentModelSerializer
+    permission_classes = [IsAuthenticated]

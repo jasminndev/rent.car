@@ -8,10 +8,10 @@ class Payment(Model):
         PAYPAL = 'PayPal', 'PayPal'
         BITCOIN = 'Bitcoin', 'Bitcoin'
 
-    card_number = CharField(max_length=50)
-    expiration_date = DateField()
+    card_number = CharField(max_length=16)
+    expiration_date = CharField(max_length=5)
     card_holder = CharField(max_length=50)
-    cvv = CharField(max_length=4)
+    cvv = CharField(max_length=3)
     card_type = CharField(max_length=10, choices=CardType.choices)
     user = ForeignKey('authentication.User', on_delete=CASCADE, related_name='payments')
     created_at = DateTimeField(auto_now_add=True)

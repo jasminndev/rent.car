@@ -3,7 +3,7 @@ from django.urls import path
 from apps.views import CarCreateAPIView, CategoryDeleteAPIView, CategoryCreateAPIView, CategoryListAPIView, \
     CategoryUpdateAPIView, CarDeleteAPIView, CarListAPIView, CarDetailAPIView, CarUpdateAPIView, \
     ReviewCreateAPIView, ReviewUpdateAPIView, ReviewDeleteAPIView, PickUpCreateAPIView, PickUpUpdateAPIView, \
-    DropOffCreateAPIView, DropOffUpdateAPIView, ReviewListAPIView
+    DropOffCreateAPIView, DropOffUpdateAPIView, ReviewListAPIView, PaymentCreateAPIView
 
 urlpatterns = [
     path('category-create', CategoryCreateAPIView.as_view()),
@@ -23,5 +23,6 @@ urlpatterns = [
     path('pickup-update/<int:pk>', PickUpUpdateAPIView.as_view()),
     path('dropoff-create', DropOffCreateAPIView.as_view()),
     path('dropoff-update/<int:pk>', DropOffUpdateAPIView.as_view()),
+    path('payment-create', PaymentCreateAPIView.as_view()),
 
 ]

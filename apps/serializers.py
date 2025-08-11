@@ -1,5 +1,3 @@
-from datetime import date
-
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
@@ -10,18 +8,23 @@ from authentication.serializers import UserModelSerializer
 class PaymentModelSerializer(ModelSerializer):
     class Meta:
         model = Payment
-        fields = ('expiration_date', 'card_holder', 'cvv', 'card_type', 'user')
+        fields = ('expiration_date', 'card_holder', 'cvv', 'card_type', 'user',)
         read_only_fields = ('id', 'created_at')
 
     def validate_expiration_date(self, value):
-        if value < date.today():
-            return ValidationError('The card has expired !')
+        digits = value.replace('-', '')
+        if len(digits) == 4 and digits.isdigit():
+            value = f"{digits[:2]}/{digits[2:]}"
+        import re
+        if not re.match(r'^(0[1-9]|1[0-2])/[0-9]{2}$', value):
+            raise ValidationError("Expiration date must be in the format MM/YY")
         return value
 
-    def validate_cvv(self, value):
-        if len(value) < 3 or len(value) > 3:
-            return ValidationError('CVV must contain no less and no more than 3 digits !')
-        return value
+    def validate_card_holder(self, value):
+        import re
+        if not re.match(r'^[A-Z ]+$', value.upper()):
+            raise ValidationError("Card holder must be an uppercase letter")
+        return value.upper()
 
 
 class CategoryModelSerializer(ModelSerializer):
