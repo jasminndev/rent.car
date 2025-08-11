@@ -8,8 +8,8 @@ from authentication.serializers import UserModelSerializer
 class PaymentModelSerializer(ModelSerializer):
     class Meta:
         model = Payment
-        fields = ('expiration_date', 'card_holder', 'cvv', 'card_type', 'user',)
-        read_only_fields = ('id', 'created_at')
+        fields = ('expiration_date', 'card_holder', 'cvv', 'card_type',)
+        read_only_fields = ('id', 'created_at', 'user')
 
     def validate_expiration_date(self, value):
         digits = value.replace('-', '')
@@ -25,6 +25,11 @@ class PaymentModelSerializer(ModelSerializer):
         if not re.match(r'^[A-Z ]+$', value.upper()):
             raise ValidationError("Card holder must be an uppercase letter")
         return value.upper()
+
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        user.save()
+        return user
 
 
 class CategoryModelSerializer(ModelSerializer):

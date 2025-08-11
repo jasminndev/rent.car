@@ -46,6 +46,9 @@ class CarCreateAPIView(CreateAPIView):
     queryset = Car.objects.all()
     permission_classes = [IsAdminUser]
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 @extend_schema(tags=['car'])
 class CarListAPIView(ListAPIView):
