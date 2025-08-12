@@ -1,5 +1,5 @@
 from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DecimalField, DateTimeField
-from django.db.models.fields import CharField, DateField, IntegerField, TimeField
+from django.db.models.fields import CharField, DateField, IntegerField, TimeField, BigIntegerField
 
 
 class Payment(Model):
@@ -50,6 +50,7 @@ class Car(Model):
     main_image = ImageField(upload_to='main_image/%Y/%m/%d/')
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
+    telegram_message_id = BigIntegerField(null=True, blank=True)
 
 
 class CarImages(Model):
