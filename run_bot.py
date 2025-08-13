@@ -6,13 +6,13 @@ from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 
-from apps.models import Car
-from bot.core.config import conf
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "root.settings")
 django.setup()
 
-bot = Bot(token=conf.TOKEN)
+from apps.models import Car
+from bot.core.config import conf
+
+bot = Bot(token=conf.bot.BOT_TOKEN)
 dp = Dispatcher()
 
 
