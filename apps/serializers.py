@@ -46,7 +46,7 @@ class CategoryModelSerializer(ModelSerializer):
 class ReviewModelSerializer(ModelSerializer):
     class Meta:
         model = Review
-        fields = ('stars', 'text')
+        fields = ('stars', 'text', 'car')
         read_only_fields = ('id', 'created_at', 'updated_at', 'user')
 
     def to_representation(self, instance):
@@ -60,8 +60,7 @@ class CarModelSerializer(ModelSerializer):
 
     class Meta:
         model = Car
-        fields = (
-            'name', 'description', 'category', 'capacity', 'steering', 'gasoline', 'price', 'main_image', 'reviews')
+        fields = ('name', 'description', 'category', 'capacity', 'steering', 'gasoline', 'price', 'main_image', 'reviews')
         read_only_fields = ('id', 'created_at', 'updated_at',)
 
     def validate_price(self, value):

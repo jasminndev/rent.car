@@ -105,8 +105,8 @@ class WishlistModelSerializer(ModelSerializer):
 
     class Meta:
         model = Wishlist
-        fields = ('user', 'car', 'car_id')
-        read_only_fields = ('id', 'car')
+        fields = ('car', 'car_id')
+        read_only_fields = ('id', 'car', 'user')
 
     def create(self, validated_data):
         car = validated_data.pop('car_id')
