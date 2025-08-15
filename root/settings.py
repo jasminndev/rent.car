@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     # my apps
     'authentication',
     'apps',
+    'bot',
     # DRF
     'rest_framework',
     'drf_spectacular',

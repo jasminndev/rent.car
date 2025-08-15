@@ -17,6 +17,7 @@ def run_async(func):
 
 def send_car_to_channel(car):
     async def _send():
+        link = f"https://t.me/{conf.BOT_USERNAME}?start=car_{car.id}"
         msg = await bot.send_message(
             chat_id=conf.CHANNEL_ID,
             text=f"🚗 {car.name}\n💰 {car.price}\n\n"
