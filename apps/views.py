@@ -47,8 +47,6 @@ class CarCreateAPIView(CreateAPIView):
     permission_classes = [IsAdminUser]
 
 
-
-
 @extend_schema(tags=['car'])
 class CarListAPIView(ListAPIView):
     queryset = Car.objects.all()

@@ -20,10 +20,10 @@ dp = Dispatcher()
 async def start(message: Message):
     args = message.text.split()
     if len(args) > 1:
-        car_id = args[1]
+        id = args[1]
         try:
-            car = Car.objects.get(id=car_id)
-            await message.answer(f"Car ID: {car.id}\nPrice: {car.price}")
+            car = Car.objects.get(id=id)
+            await message.answer(f"Images: {car.main_image}Car ID: {car.id}\nPrice: {car.price}")
         except Car.DoesNotExist:
             await message.answer(f"Car not found!")
     else:

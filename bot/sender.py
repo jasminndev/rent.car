@@ -1,15 +1,13 @@
 from aiogram import Bot
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 
 from bot.core.config import conf
 
 bot = Bot(token=conf.bot.BOT_TOKEN)
 
-import asyncio
-
 
 def run_async(coro):
-    asyncio.run(coro)
+    async_to_sync(coro)()
 
 
 def send_car_to_channel(car):

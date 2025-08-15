@@ -7,7 +7,7 @@ from bot.sender import update_car_post
 
 
 @receiver(post_save, sender=Car)
-def send_or_update_car(sender, instance, created, **kwargs):
+def send_or_update_car(instance, created, **kwargs):
     if created:
         send_car_to_channel(instance)
     else:
