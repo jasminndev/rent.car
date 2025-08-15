@@ -9,26 +9,44 @@ from apps.models import Car
 from bot.core.config import conf
 
 
+def get_car_data(car: Car):
+    return {
+        'id': car.id,
+        'name': car.name,
+        'description': car.description,
+        'category': str(car.category),  # Forces loading if needed; adjust to car.category.name if desired
+        'capacity': car.capacity,
+        'steering': car.steering,
+        'gasoline': car.gasoline,
+        'price': car.price,
+        'main_image_path': car.main_image.path if car.main_image else None,
+        'telegram_message_id': car.telegram_message_id,
+    }
+
+
 async def _send(car: Car):
+    car_data = await sync_to_async(get_car_data)(car)
+
     bot = Bot(
         token=conf.bot.BOT_TOKEN,
         default=DefaultBotProperties(parse_mode="Markdown")
     )
-    link = f"https://t.me/{conf.bot.BOT_USERNAME}?start=car_{car.id}"
+    link = f"https://t.me/{conf.bot.BOT_USERNAME}?start=car_{car_data['id']}"
     caption = (
-        f"🚗 **{car.name}**\n"
-        f"📝 Description: {car.description}\n"
-        f"🗂 Category: {car.category}\n"
-        f"👥 Capacity: {car.capacity}\n"
-        f"⚙ Steering: {car.steering}\n"
-        f"⛽ Gasoline: {car.gasoline}\n"
-        f"💰 Price: {car.price}\n\n"
+        f"🚗 **{car_data['name']}**\n"
+        f"📝 Description: {car_data['description']}\n"
+        f"🗂 Category: {car_data['category']}\n"
+        f"👥 Capacity: {car_data['capacity']}\n"
+        f"⚙ Steering: {car_data['steering']}\n"
+        f"⛽ Gasoline: {car_data['gasoline']}\n"
+        f"💰 Price: {car_data['price']}\n\n"
         f"[View in bot]({link})"
     )
-    if car.main_image:
+    # Send photo if main_image exists; fallback to text message if not
+    if car_data['main_image_path']:
         msg = await bot.send_photo(
             chat_id=conf.bot.CHANNEL_ID,
-            photo=FSInputFile(car.main_image.path),
+            photo=FSInputFile(car_data['main_image_path']),
             caption=caption
         )
     else:
@@ -37,7 +55,7 @@ async def _send(car: Car):
             text=caption
         )
 
-    await sync_to_async(Car.objects.filter(pk=car.id).update)(
+    await sync_to_async(Car.objects.filter(pk=car_data['id']).update)(
         telegram_message_id=msg.message_id
     )
 
@@ -49,36 +67,39 @@ def send_car_to_channel(car):
 
 
 async def _update(car: Car):
+    car_data = await sync_to_async(get_car_data)(car)
+
     bot = Bot(
         token=conf.bot.BOT_TOKEN,
         default=DefaultBotProperties(parse_mode="Markdown")
     )
-    link = f"https://t.me/{conf.bot.BOT_USERNAME}?start=car_{car.id}"
+    link = f"https://t.me/{conf.bot.BOT_USERNAME}?start=car_{car_data['id']}"
     caption = (
-        f"🚗 **{car.name}**\n"
-        f"📝 Description: {car.description}\n"
-        f"🗂 Category: {car.category}\n"
-        f"👥 Capacity: {car.capacity}\n"
-        f"⚙ Steering: {car.steering}\n"
-        f"⛽ Gasoline: {car.gasoline}\n"
-        f"💰 Price: {car.price}\n\n"
+        f"🚗 **{car_data['name']}**\n"
+        f"📝 Description: {car_data['description']}\n"
+        f"🗂 Category: {car_data['category']}\n"
+        f"👥 Capacity: {car_data['capacity']}\n"
+        f"⚙ Steering: {car_data['steering']}\n"
+        f"⛽ Gasoline: {car_data['gasoline']}\n"
+        f"💰 Price: {car_data['price']}\n\n"
         f"[View in bot]({link})"
     )
-    if car.main_image:
+    # Edit as media if main_image exists; fallback to text edit if not
+    if car_data['main_image_path']:
         media = InputMediaPhoto(
-            media=FSInputFile(car.main_image.path),
+            media=FSInputFile(car_data['main_image_path']),
             caption=caption,
             parse_mode="Markdown"
         )
         await bot.edit_message_media(
             chat_id=conf.bot.CHANNEL_ID,
-            message_id=car.telegram_message_id,
+            message_id=car_data['telegram_message_id'],
             media=media
         )
     else:
         await bot.edit_message_text(
             chat_id=conf.bot.CHANNEL_ID,
-            message_id=car.telegram_message_id,
+            message_id=car_data['telegram_message_id'],
             text=caption
         )
 
