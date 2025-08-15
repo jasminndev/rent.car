@@ -61,7 +61,7 @@ class CarModelSerializer(ModelSerializer):
     class Meta:
         model = Car
         fields = ('name', 'description', 'category', 'capacity', 'steering', 'gasoline', 'price', 'main_image', 'reviews')
-        read_only_fields = ('id', 'created_at', 'updated_at',)
+        read_only_fields = ('id', 'created_at', 'updated_at', 'telegram_message_id')
 
     def validate_price(self, value):
         if value < 0:

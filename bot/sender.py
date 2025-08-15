@@ -1,38 +1,49 @@
+import asyncio
+
 from aiogram import Bot
-from asgiref.sync import sync_to_async, async_to_sync
+from aiogram.client.default import DefaultBotProperties
+from asgiref.sync import sync_to_async
 
 from bot.core.config import conf
 
-bot = Bot(token=conf.bot.BOT_TOKEN)
 
+async def _send(car_id: int, name: str, price: str):
+    bot = Bot(
+        token=conf.bot.BOT_TOKEN,
+        default=DefaultBotProperties(parse_mode="Markdown")
+    )
+    link = f"https://t.me/{conf.bot.BOT_USERNAME}?start=car_{car_id}"
+    msg = await bot.send_message(
+        chat_id=conf.bot.CHANNEL_ID,
+        text=f"🚗 {name}\n💰 {price}\n\n[View in bot]({link})"
+    )
 
-def run_async(coro):
-    async_to_sync(coro)()
+    from apps.models import Car
+    await sync_to_async(Car.objects.filter(pk=car_id).update)(
+        telegram_message_id=msg.message_id
+    )
+
+    await bot.session.close()
 
 
 def send_car_to_channel(car):
-    async def _send():
-        link = f"https://t.me/{conf.bot.BOT_USERNAME}?start=car_{car.id}"
-        msg = await bot.send_message(
-            chat_id=conf.bot.CHANNEL_ID,
-            text=f"🚗 {car.name}\n💰 {car.price}\n\n"
-                 f"[View in bot]({link})",
-            parse_mode="Markdown"
-        )
-        car.telegram_message_id = msg.message_id
-        await sync_to_async(car.save)(update_fields=["telegram_message_id"])
+    asyncio.run(_send(car.id, car.name, str(car.price)))
 
-    run_async(_send())
+
+async def _update(car_id: int, message_id: int, name: str, price: str):
+    bot = Bot(
+        token=conf.bot.BOT_TOKEN,
+        default=DefaultBotProperties(parse_mode="Markdown")
+    )
+    link = f"https://t.me/{conf.bot.BOT_USERNAME}?start=car_{car_id}"
+    await bot.edit_message_text(
+        chat_id=conf.bot.CHANNEL_ID,
+        message_id=message_id,
+        text=f"🚗 {name}\n💰 {price}\n\n[View in bot]({link})"
+    )
+
+    await bot.session.close()
 
 
 def update_car_post(car):
-    async def _update():
-        await bot.edit_message_text(
-            chat_id=conf.bot.CHANNEL_ID,
-            message_id=car.telegram_message_id,
-            text=f"🚗 {car.name}\n💰 {car.price}\n\n"
-                 f"[View in bot](https://t.me/{conf.bot.BOT_USERNAME}?start={car.id})",
-            parse_mode="Markdown"
-        )
-
-    run_async(_update())
+    asyncio.run(_update(car.id, car.telegram_message_id, car.name, str(car.price)))
