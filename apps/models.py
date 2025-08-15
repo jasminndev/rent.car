@@ -52,6 +52,9 @@ class Car(Model):
     updated_at = DateTimeField(auto_now=True)
     telegram_message_id = BigIntegerField(null=True, blank=True)
 
+    def __str__(self):
+        return f'{self.category} - {self.name}'
+
 
 class CarImages(Model):
     images = ImageField(upload_to='car/%Y/%m/%d/')
