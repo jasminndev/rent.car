@@ -26,7 +26,9 @@ class RedisConfig:
 
 @dataclass
 class BotConfig:
-    BOT_TOKEN: str = os.getenv("TOKEN")
+    BOT_TOKEN: str = os.getenv("BOT_TOKEN")
+    BOT_USERNAME: str = os.getenv("BOT_USERNAME")
+    CHANNEL_ID: str = os.getenv("CHANNEL_ID")
 
 
 @dataclass

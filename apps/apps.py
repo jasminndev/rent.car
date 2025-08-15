@@ -6,5 +6,5 @@ class AppsConfig(AppConfig):
     name = 'apps'
 
 
-def ready(self):
-    import apps.signals
+    def ready(self):
+        import apps.signals
