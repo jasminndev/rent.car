@@ -14,7 +14,7 @@ def get_car_data(car: Car):
         'id': car.id,
         'name': car.name,
         'description': car.description,
-        'category': str(car.category),  # Forces loading if needed; adjust to car.category.name if desired
+        'category': str(car.category),
         'capacity': car.capacity,
         'steering': car.steering,
         'gasoline': car.gasoline,
@@ -42,7 +42,6 @@ async def _send(car: Car):
         f"💰 Price: {car_data['price']}\n\n"
         f"[View in bot]({link})"
     )
-    # Send photo if main_image exists; fallback to text message if not
     if car_data['main_image_path']:
         msg = await bot.send_photo(
             chat_id=conf.bot.CHANNEL_ID,
@@ -76,15 +75,14 @@ async def _update(car: Car):
     link = f"https://t.me/{conf.bot.BOT_USERNAME}?start=car_{car_data['id']}"
     caption = (
         f"🚗 **{car_data['name']}**\n"
-        f"📝 Description: {car_data['description']}\n"
         f"🗂 Category: {car_data['category']}\n"
         f"👥 Capacity: {car_data['capacity']}\n"
         f"⚙ Steering: {car_data['steering']}\n"
         f"⛽ Gasoline: {car_data['gasoline']}\n"
         f"💰 Price: {car_data['price']}\n\n"
+        f"📝 Description: {car_data['description']}\n"
         f"[View in bot]({link})"
     )
-    # Edit as media if main_image exists; fallback to text edit if not
     if car_data['main_image_path']:
         media = InputMediaPhoto(
             media=FSInputFile(car_data['main_image_path']),

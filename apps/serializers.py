@@ -1,7 +1,7 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
-from apps.models import Payment, Category, Car, Review, PickUp, DropOff
+from apps.models import Payment, Category, Car, Review, PickUp, DropOff, CarImages
 from authentication.serializers import UserModelSerializer
 
 
@@ -93,3 +93,10 @@ class DropOffModelSerializer(ModelSerializer):
         model = DropOff
         fields = ('location', 'user', 'date', 'time')
         read_only_fields = ('id',)
+
+
+class CarImagesModelSerializer(ModelSerializer):
+    class Meta:
+        model = CarImages
+        fields = ('images',)
+

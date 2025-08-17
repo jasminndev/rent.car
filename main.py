@@ -4,7 +4,8 @@ import os
 import django
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
-from aiogram.types import Message
+from aiogram.types import Message, InputMediaPhoto, FSInputFile
+from asgiref.sync import sync_to_async
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "root.settings")
 django.setup()
@@ -20,10 +21,36 @@ dp = Dispatcher()
 async def start(message: Message):
     args = message.text.split()
     if len(args) > 1:
-        id = args[1]
+        param = args[1]
+        if param.startswith('car_'):
+            try:
+                car_id = int(param.split('_')[1])
+            except (IndexError, ValueError):
+                await message.answer("Invalid car ID!")
+                return
+        else:
+            try:
+                car_id = int(param)
+            except ValueError:
+                await message.answer("Invalid car ID!")
+                return
+
         try:
-            car = Car.objects.get(id=id)
-            await message.answer(f"Images: {car.main_image}Car ID: {car.id}\nPrice: {car.price}")
+            car = await sync_to_async(Car.objects.prefetch_related('carimages_set').get)(id=car_id)
+            images = []
+            if car.main_image:
+                images.append(car.main_image)
+            images.extend([ci.images for ci in car.carimages_set.all()])
+            file_paths = [img.path for img in images if img]
+
+            caption = f"Car ID: {car.id}\nPrice: {car.price}"
+
+            if file_paths:
+                media = [InputMediaPhoto(media=FSInputFile(path)) for path in file_paths]
+                media[0].caption = caption
+                await message.answer_media_group(media=media)
+            else:
+                await message.answer(f"{caption}\nNo images available.")
         except Car.DoesNotExist:
             await message.answer(f"Car not found!")
     else:
