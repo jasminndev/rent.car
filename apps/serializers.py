@@ -1,36 +1,11 @@
+import re
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
-from apps.models import Category, Car, Review, CarImages
+from apps.models import Category, Car, Review, CarImages, PaymentInfo, BillingInfo, RentalInfo, RentalOrder
 from authentication.serializers import UserModelSerializer
-
-
-# class PaymentModelSerializer(ModelSerializer):
-#     class Meta:
-#         model = Payment
-#         fields = ('expiration_date', 'card_holder', 'cvv', 'card_type',)
-#         read_only_fields = ('id', 'created_at', 'user')
-#
-#     def validate_expiration_date(self, value):
-#         digits = value.replace('-', '')
-#         if len(digits) == 4 and digits.isdigit():
-#             value = f"{digits[:2]}/{digits[2:]}"
-#         import re
-#         if not re.match(r'^(0[1-9]|1[0-2])/[0-9]{2}$', value):
-#             raise ValidationError("Expiration date must be in the format MM/YY")
-#         return value
-#
-#     def validate_card_holder(self, value):
-#         import re
-#         if not re.match(r'^[A-Z ]+$', value.upper()):
-#             raise ValidationError("Card holder must be an uppercase letter")
-#         return value.upper()
-#
-#     def save(self, **kwargs):
-#         user = self.context['request'].user
-#         user.save()
-#         return user
 
 
 class CategoryModelSerializer(ModelSerializer):
@@ -137,7 +112,74 @@ class ReviewUpdateModelSerializer(ReviewModelSerializer):
         read_only_fields = ('id', 'stars', 'user', 'car', 'created_at', 'updated_at',)
 
 
-class CarImagesModelSerializer(ModelSerializer):
+class PaymentModelSerializer(ModelSerializer):
     class Meta:
-        model = CarImages
-        fields = ('images',)
+        model = PaymentInfo
+        fields = ('expiration_date', 'card_holder', 'cvv', 'card_type',)
+        read_only_fields = ('id', 'created_at', 'user')
+
+    def validate_expiration_date(self, value):
+        digits = value.replace('-', '')
+        if len(digits) == 4 and digits.isdigit():
+            value = f"{digits[:2]}/{digits[2:]}"
+        import re
+        if not re.match(r'^(0[1-9]|1[0-2])/[0-9]{2}$', value):
+            raise ValidationError("Expiration date must be in the format MM/YY")
+        return value
+
+    def validate_card_holder(self, value):
+        import re
+        if not re.match(r'^[A-Z ]+$', value.upper()):
+            raise ValidationError("Card holder must be an uppercase letter")
+        return value.upper()
+
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        user.save()
+        return user
+
+
+class BillingInfoModelSerializer(ModelSerializer):
+    class Meta:
+        model = BillingInfo
+        fields = ('full_name', 'phone', 'address', 'city', 'user')
+        read_only_fields = ('id',)
+
+    def validate_phone(self, value):
+        phone = re.sub('\D', '', value)
+        pattern = r'^998(90|91|93|94|95|97|98|99|33|88|50|77)\d{7}$'
+
+        if not re.match(pattern, phone):
+            raise ValidationError('Telefon raqami quyidagi formatda bo‘lishi kerak: +998XXXXXXXXX')
+        return phone
+
+
+class RentalInfoModelSerializer(ModelSerializer):
+    class Meta:
+        model = RentalInfo
+        fields = ('pickup_location', 'pickup_date', 'pickup_time', 'dropoff_location', 'dropoff_date', 'dropoff_time', 'car')
+        read_only_fields = ('id',)
+
+
+class RentalOrderSerializer(serializers.ModelSerializer):
+    billing = BillingInfoModelSerializer()
+    rental = RentalInfoModelSerializer()
+    payment = PaymentModelSerializer()
+
+    class Meta:
+        model = RentalOrder
+        fields = "__all__"
+
+    def create(self, validated_data):
+        billing_data = validated_data.pop("billing")
+        rental_data = validated_data.pop("rental")
+        payment_data = validated_data.pop("payment")
+
+        billing = BillingInfo.objects.create(**billing_data)
+        rental = RentalInfo.objects.create(**rental_data)
+        payment = PaymentInfo.objects.create(**payment_data)
+
+        order = RentalOrder.objects.create(
+            billing=billing, rental=rental, payment=payment, **validated_data
+        )
+        return order
