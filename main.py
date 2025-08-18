@@ -43,7 +43,15 @@ async def start(message: Message):
             images.extend([ci.images for ci in car.carimages_set.all()])
             file_paths = [img.path for img in images if img]
 
-            caption = f"Car ID: {car.id}\nPrice: {car.price}"
+            caption = (
+                f"🚗 Name: {car.name}\n"
+                f"💰 Price: {car.price}\n"
+                f"⛽ Gasoline: {car.gasoline}\n"
+                f"⚙ Steering: {car.steering}\n"
+                f"👥 Capacity: {car.capacity}\n"
+                # f"🗂 Category: {car.category}\n"
+                f"📝 Description: {car.description}\n"
+            )
 
             if file_paths:
                 media = [InputMediaPhoto(media=FSInputFile(path)) for path in file_paths]
