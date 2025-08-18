@@ -5,9 +5,9 @@ from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, 
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 
 from apps.filter import CarFilter
-from apps.models import Car, Category, Review, PickUp, DropOff, Payment, CarImages
-from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, PickUpModelSerializer, \
-    DropOffModelSerializer, ReviewUpdateModelSerializer, PaymentModelSerializer, CarImagesModelSerializer
+from apps.models import Car, Category, Review, CarImages
+from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, \
+    ReviewUpdateModelSerializer, CarImagesModelSerializer
 
 
 @extend_schema(tags=['category'])
@@ -117,43 +117,6 @@ class ReviewDeleteAPIView(DestroyAPIView):
     serializer_class = ReviewModelSerializer
     permission_classes = [IsAdminUser]
     lookup_field = 'pk'
-
-
-@extend_schema(tags=['pick-up'])
-class PickUpCreateAPIView(CreateAPIView):
-    queryset = PickUp.objects.all()
-    serializer_class = PickUpModelSerializer
-    permission_classes = [IsAuthenticated]
-
-
-@extend_schema(tags=['pick-up'])
-class PickUpUpdateAPIView(UpdateAPIView):
-    queryset = PickUp.objects.all()
-    serializer_class = PickUpModelSerializer
-    permission_classes = [IsAuthenticated]
-    lookup_field = 'pk'
-
-
-@extend_schema(tags=['drop-off'])
-class DropOffCreateAPIView(CreateAPIView):
-    queryset = DropOff.objects.all()
-    serializer_class = DropOffModelSerializer
-    permission_classes = [IsAuthenticated]
-
-
-@extend_schema(tags=['drop-off'])
-class DropOffUpdateAPIView(UpdateAPIView):
-    queryset = DropOff.objects.all()
-    serializer_class = DropOffModelSerializer
-    permission_classes = [IsAuthenticated]
-    lookup_field = 'pk'
-
-
-@extend_schema(tags=['payment'])
-class PaymentCreateAPIView(CreateAPIView):
-    queryset = Payment.objects.all()
-    serializer_class = PaymentModelSerializer
-    permission_classes = [IsAuthenticated]
 
 
 @extend_schema(tags=['car-images'])

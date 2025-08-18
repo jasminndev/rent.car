@@ -1,23 +1,6 @@
-from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DateTimeField
-from django.db.models.fields import CharField, DateField, IntegerField, TimeField, BigIntegerField, PositiveIntegerField
-
-
-class Payment(Model):
-    class CardType(TextChoices):
-        VISA = 'Visa', 'Visa'
-        PAYPAL = 'PayPal', 'PayPal'
-        BITCOIN = 'Bitcoin', 'Bitcoin'
-
-    card_number = CharField(max_length=16)
-    expiration_date = CharField(max_length=5)
-    card_holder = CharField(max_length=50)
-    cvv = CharField(max_length=3)
-    card_type = CharField(max_length=10, choices=CardType.choices)
-    user = ForeignKey('authentication.User', on_delete=CASCADE, related_name='payments')
-    created_at = DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'{self.card_type} - {self.card_holder}'
+from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DateTimeField, \
+    OneToOneField, DateField, TimeField
+from django.db.models.fields import CharField, IntegerField, BigIntegerField, PositiveIntegerField
 
 
 class Category(Model):
@@ -82,29 +65,59 @@ class Review(Model):
     updated_at = DateTimeField(auto_now=True)
 
 
-class PickUp(Model):
-    class LocationType(TextChoices):
-        SHAYXONTOHUR = 'SHAYXONTOHUR', 'shayxontohur'
-        UCHTEPA = 'UCHTEPA', 'uchtepa'
-        YUNUSOBOD = 'YUNUSOBOD', 'yunusobod'
-        YAKKASAROY = 'YAKKASAROY', 'yakkasaroy'
-        OLMAZOR = 'OLMAZOR', 'olmazor'
+class BillingInfo(Model):
+    user = ForeignKey('authentication.User', on_delete=CASCADE)
+    full_name = CharField(max_length=100)
+    phone = CharField(max_length=20)
+    address = CharField(max_length=255)
+    city = CharField(max_length=100)
 
-    location = CharField(max_length=50, choices=LocationType.choices)
-    date = DateField()
-    time = TimeField()
-    user = ForeignKey('authentication.User', on_delete=CASCADE, related_name='pick_ups')
+    def __str__(self):
+        return f"{self.full_name} ({self.city})"
 
 
-class DropOff(Model):
-    class LocationType(TextChoices):
-        SHAYXONTOHUR = 'SHAYXONTOHUR', 'shayxontohur'
-        UCHTEPA = 'UCHTEPA', 'uchtepa'
-        YUNUSOBOD = 'YUNUSOBOD', 'yunusobod'
-        YAKKASAROY = 'YAKKASAROY', 'yakkasaroy'
-        OLMAZOR = 'OLMAZOR', 'olmazor'
+class LocationChoices(TextChoices):
+    TASHKENT_AIRPORT = "TAS_AIR", "Tashkent Airport"
+    TASHKENT_CITY = "TAS_CITY", "Tashkent City Center"
+    SAMARKAND_STATION = "SAM_ST", "Samarkand Station"
+    BUKHARA_DOWNTOWN = "BUH_DT", "Bukhara Downtown"
 
-    location = CharField(max_length=50, choices=LocationType.choices)
-    date = DateField()
-    time = TimeField()
-    user = ForeignKey('authentication.User', on_delete=CASCADE, related_name='drop_offs')
+
+class RentalInfo(Model):
+    car = ForeignKey("apps.Car", on_delete=CASCADE)
+    pickup_location = CharField(max_length=20, choices=LocationChoices.choices)
+    pickup_date = DateField()
+    pickup_time = TimeField()
+    dropoff_location = CharField(max_length=20, choices=LocationChoices.choices)
+    dropoff_date = DateField()
+    dropoff_time = TimeField()
+
+    def __str__(self):
+        return f"{self.car} | {self.pickup_location} → {self.dropoff_location}"
+
+
+class PaymentInfo(Model):
+    PAYMENT_METHODS = [
+        ("card", "Credit Card"),
+        ("paypal", "PayPal"),
+        ("btc", "Bitcoin"),
+    ]
+    method = CharField(max_length=20, choices=PAYMENT_METHODS)
+    card_number = CharField(max_length=16, blank=True, null=True)
+    expiry = CharField(max_length=5, blank=True, null=True)
+    holder = CharField(max_length=100, blank=True, null=True)
+    cvc = CharField(max_length=4, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.method}"
+
+
+class RentalOrder(Model):
+    user = ForeignKey('authentication.User', on_delete=CASCADE)
+    billing = OneToOneField(BillingInfo, on_delete=CASCADE)
+    rental = OneToOneField(RentalInfo, on_delete=CASCADE)
+    payment = OneToOneField(PaymentInfo, on_delete=CASCADE)
+    created_at = DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Order #{self.id} by {self.user}"

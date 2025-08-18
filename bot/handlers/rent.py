@@ -1,6 +1,7 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
 
+from authentication.models import User
 from bot.dispatcher import dp
 from bot.states import RentCarForm
 
@@ -43,7 +44,6 @@ async def ask_payment_method(message: Message, state: FSMContext):
         inline_keyboard=[
             [InlineKeyboardButton(text="💳 Credit Card", callback_data="pay_card")],
             [InlineKeyboardButton(text="💲 PayPal", callback_data="pay_paypal")],
-            [InlineKeyboardButton(text="₿ Bitcoin", callback_data="pay_btc")],
         ]
     )
     await message.answer("💰 Choose a payment method:", reply_markup=keyboard)
@@ -65,6 +65,7 @@ async def confirm_order(message: Message, state: FSMContext):
         f"📍 Dropoff: {data['dropoff_location']} on {data['dropoff_date']} at {data['dropoff_time']}\n\n"
         f"💳 Payment: {data['payment_method']}"
     )
+
 
     await message.answer(summary)
     await state.clear()

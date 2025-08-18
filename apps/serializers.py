@@ -2,35 +2,35 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
-from apps.models import Payment, Category, Car, Review, PickUp, DropOff, CarImages
+from apps.models import Category, Car, Review, CarImages
 from authentication.serializers import UserModelSerializer
 
 
-class PaymentModelSerializer(ModelSerializer):
-    class Meta:
-        model = Payment
-        fields = ('expiration_date', 'card_holder', 'cvv', 'card_type',)
-        read_only_fields = ('id', 'created_at', 'user')
-
-    def validate_expiration_date(self, value):
-        digits = value.replace('-', '')
-        if len(digits) == 4 and digits.isdigit():
-            value = f"{digits[:2]}/{digits[2:]}"
-        import re
-        if not re.match(r'^(0[1-9]|1[0-2])/[0-9]{2}$', value):
-            raise ValidationError("Expiration date must be in the format MM/YY")
-        return value
-
-    def validate_card_holder(self, value):
-        import re
-        if not re.match(r'^[A-Z ]+$', value.upper()):
-            raise ValidationError("Card holder must be an uppercase letter")
-        return value.upper()
-
-    def save(self, **kwargs):
-        user = self.context['request'].user
-        user.save()
-        return user
+# class PaymentModelSerializer(ModelSerializer):
+#     class Meta:
+#         model = Payment
+#         fields = ('expiration_date', 'card_holder', 'cvv', 'card_type',)
+#         read_only_fields = ('id', 'created_at', 'user')
+#
+#     def validate_expiration_date(self, value):
+#         digits = value.replace('-', '')
+#         if len(digits) == 4 and digits.isdigit():
+#             value = f"{digits[:2]}/{digits[2:]}"
+#         import re
+#         if not re.match(r'^(0[1-9]|1[0-2])/[0-9]{2}$', value):
+#             raise ValidationError("Expiration date must be in the format MM/YY")
+#         return value
+#
+#     def validate_card_holder(self, value):
+#         import re
+#         if not re.match(r'^[A-Z ]+$', value.upper()):
+#             raise ValidationError("Card holder must be an uppercase letter")
+#         return value.upper()
+#
+#     def save(self, **kwargs):
+#         user = self.context['request'].user
+#         user.save()
+#         return user
 
 
 class CategoryModelSerializer(ModelSerializer):
@@ -135,20 +135,6 @@ class ReviewUpdateModelSerializer(ReviewModelSerializer):
         model = Review
         fields = ('text',)
         read_only_fields = ('id', 'stars', 'user', 'car', 'created_at', 'updated_at',)
-
-
-class PickUpModelSerializer(ModelSerializer):
-    class Meta:
-        model = PickUp
-        fields = ('location', 'user', 'date', 'time')
-        read_only_fields = ('id',)
-
-
-class DropOffModelSerializer(ModelSerializer):
-    class Meta:
-        model = DropOff
-        fields = ('location', 'user', 'date', 'time')
-        read_only_fields = ('id',)
 
 
 class CarImagesModelSerializer(ModelSerializer):
