@@ -38,7 +38,7 @@ class Car(Model):
         MANUAL = 'Manual', 'manual'
         POWER = 'Power', 'power'
         ELECTRIC = 'Electric', 'electric'
-        HYBRAULIC = 'Hybraulic', 'hybraulic'
+        HYDRAULIC = 'Hydraulic', 'hydraulic'
 
     name = CharField(max_length=50)
     description = TextField()

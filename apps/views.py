@@ -5,9 +5,9 @@ from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, 
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 
 from apps.filter import CarFilter
-from apps.models import Car, Category, Review, PickUp, DropOff, Payment
+from apps.models import Car, Category, Review, PickUp, DropOff, Payment, CarImages
 from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, PickUpModelSerializer, \
-    DropOffModelSerializer, ReviewUpdateModelSerializer, PaymentModelSerializer
+    DropOffModelSerializer, ReviewUpdateModelSerializer, PaymentModelSerializer, CarImagesModelSerializer
 
 
 @extend_schema(tags=['category'])
@@ -154,3 +154,26 @@ class PaymentCreateAPIView(CreateAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentModelSerializer
     permission_classes = [IsAuthenticated]
+
+
+@extend_schema(tags=['car-images'])
+class CarImagesCreateAPIView(CreateAPIView):
+    queryset = CarImages.objects.all()
+    serializer_class = CarImagesModelSerializer
+    permission_classes = [IsAdminUser]
+
+
+@extend_schema(tags=['car-images'])
+class CarImagesUpdateAPIView(UpdateAPIView):
+    queryset = CarImages.objects.all()
+    serializer_class = CarImagesModelSerializer
+    permission_classes = [IsAdminUser]
+    lookup_field = 'pk'
+
+
+@extend_schema(tags=['car-images'])
+class CarImagesDeleteAPIView(DestroyAPIView):
+    queryset = CarImages.objects.all()
+    serializer_class = CarImagesModelSerializer
+    permission_classes = [IsAdminUser]
+    lookup_field = 'pk'

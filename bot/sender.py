@@ -40,7 +40,7 @@ async def _send(car: Car):
         f"⚙ Steering: {car_data['steering']}\n"
         f"⛽ Gasoline: {car_data['gasoline']}\n"
         f"💰 Price: {car_data['price']}\n\n"
-        f"[View in bot]({link})"
+        f"[For more information]({link})"
     )
     if car_data['main_image_path']:
         msg = await bot.send_photo(

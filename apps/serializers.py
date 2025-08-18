@@ -55,12 +55,22 @@ class ReviewModelSerializer(ModelSerializer):
         return data
 
 
+class CarImagesModelSerializer(ModelSerializer):
+    class Meta:
+        model = CarImages
+        fields = ('images', 'car')
+        read_only_fields = ('id', 'created_at', 'updated_at')
+
+
 class CarModelSerializer(ModelSerializer):
     reviews = ReviewModelSerializer(many=True, read_only=True)
+    carimages_set = CarImagesModelSerializer(many=True, read_only=True)
 
     class Meta:
         model = Car
-        fields = ('name', 'description', 'category', 'capacity', 'steering', 'gasoline', 'price', 'main_image', 'reviews')
+        fields = (
+            'name', 'description', 'category', 'capacity', 'steering', 'gasoline', 'price', 'main_image', 'reviews',
+            'carimages_set')
         read_only_fields = ('id', 'created_at', 'updated_at', 'telegram_message_id')
 
     def validate_price(self, value):
@@ -71,7 +81,35 @@ class CarModelSerializer(ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['reviews'] = ReviewModelSerializer(instance.reviews.all(), many=True).data if instance.reviews else None
+        data['carimages_set'] = CarImagesModelSerializer(instance.carimages_set.all(),
+                                                         many=True).data if instance.carimages_set else None
         return data
+
+    def create(self, validated_data):
+        carimages_data = validated_data.pop('carimages_set', [])
+        car = Car.objects.create(**validated_data)
+        for image_data in carimages_data:
+            CarImages.objects.create(car=car, **image_data)
+        return car
+
+    def update(self, instance, validated_data):
+        carimages_data = validated_data.pop('carimages_set', [])
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.category = validated_data.get('category', instance.category)
+        instance.capacity = validated_data.get('capacity', instance.capacity)
+        instance.steering = validated_data.get('steering', instance.steering)
+        instance.gasoline = validated_data.get('gasoline', instance.gasoline)
+        instance.price = validated_data.get('price', instance.price)
+        instance.main_image = validated_data.get('main_image', instance.main_image)
+        instance.save()
+
+        if carimages_data:
+            instance.carimages_set.all().delete()
+            for image_data in carimages_data:
+                CarImages.objects.create(car=instance, **image_data)
+
+        return instance
 
 
 class ReviewUpdateModelSerializer(ReviewModelSerializer):
@@ -99,4 +137,3 @@ class CarImagesModelSerializer(ModelSerializer):
     class Meta:
         model = CarImages
         fields = ('images',)
-
