@@ -162,6 +162,10 @@ class CarImagesCreateAPIView(CreateAPIView):
     serializer_class = CarImagesModelSerializer
     permission_classes = [IsAdminUser]
 
+    def perform_create(self, serializer):
+        car_id = self.request.data.get('car')
+        serializer.save(car_id=car_id)
+
 
 @extend_schema(tags=['car-images'])
 class CarImagesUpdateAPIView(UpdateAPIView):

@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
@@ -62,6 +63,23 @@ class CarImagesModelSerializer(ModelSerializer):
         read_only_fields = ('id', 'created_at', 'updated_at')
 
 
+class BulkCarImagesSerializer(serializers.Serializer):
+    images = serializers.ListField(
+        child=serializers.ImageField(),
+        allow_empty=False
+    )
+    car = serializers.IntegerField(required=True)
+
+    def create(self, validated_data):
+        car_id = validated_data['car']
+        images = validated_data['images']
+        car_images = []
+        for image in images:
+            car_image = CarImages.objects.create(car_id=car_id, images=image)
+            car_images.append(car_image)
+        return car_images
+
+
 class CarModelSerializer(ModelSerializer):
     reviews = ReviewModelSerializer(many=True, read_only=True)
     carimages_set = CarImagesModelSerializer(many=True, read_only=True)
@@ -75,13 +93,13 @@ class CarModelSerializer(ModelSerializer):
 
     def validate_price(self, value):
         if value < 0:
-            return ValidationError('The car price cannot be negative!')
+            raise ValidationError('The car price cannot be negative!')
         return value
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['reviews'] = ReviewModelSerializer(instance.reviews.all(), many=True).data if instance.reviews else None
-        data['carimages_set'] = CarImagesModelSerializer(instance.carimages_set.all(),
+        data['reviews'] = ReviewModelSerializer(instance.reviews.all(), many=True).data
+        data['carimages_set'] = CarImagesModelSerializer(instance.carimages_set.all().delete(),
                                                          many=True).data if instance.carimages_set else None
         return data
 

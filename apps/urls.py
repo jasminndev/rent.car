@@ -26,7 +26,7 @@ urlpatterns = [
     path('dropoff-update/<int:pk>', DropOffUpdateAPIView.as_view()),
     path('payment-create', PaymentCreateAPIView.as_view()),
     path('car-images-create', CarImagesCreateAPIView.as_view()),
-    path('car-images-update', CarImagesUpdateAPIView.as_view()),
-    path('car-images-delete', CarImagesDeleteAPIView.as_view()),
+    path('car-images-update/<int:pk>', CarImagesUpdateAPIView.as_view()),
+    path('car-images-delete/<int:pk>', CarImagesDeleteAPIView.as_view()),
 
 ]

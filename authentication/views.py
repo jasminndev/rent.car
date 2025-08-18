@@ -31,16 +31,8 @@ class UserListAPIView(ListAPIView):
 @extend_schema(tags=['auth'])
 class UserRetrieveAPIView(RetrieveAPIView):
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
     serializer_class = UserModelSerializer
     lookup_field = 'pk'
-
-
-@extend_schema(tags=['passwd'])
-class ChangePasswordAPIView(UpdateAPIView):
-    queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
-    serializer_class = ChangePasswordSerializer
 
 
 @extend_schema(tags=['auth'])
@@ -48,6 +40,13 @@ class UserDeleteAPIView(DestroyAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = UserModelSerializer
+
+
+@extend_schema(tags=['passwd'])
+class ChangePasswordAPIView(UpdateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
 
 
 @extend_schema(tags=['wishlist'])
