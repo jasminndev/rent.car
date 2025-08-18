@@ -4,7 +4,7 @@ import os
 import django
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
-from aiogram.types import Message, InputMediaPhoto, FSInputFile
+from aiogram.types import Message, InputMediaPhoto, FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton
 from asgiref.sync import sync_to_async
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "root.settings")
@@ -36,7 +36,12 @@ async def start(message: Message):
                 return
 
         try:
-            car = await sync_to_async(Car.objects.prefetch_related('carimages_set').get)(id=car_id)
+            car = await sync_to_async(
+                lambda: Car.objects
+                .select_related("category")
+                .prefetch_related("carimages_set")
+                .get(id=car_id)
+            )()
             images = []
             if car.main_image:
                 images.append(car.main_image)
@@ -49,18 +54,27 @@ async def start(message: Message):
                 f"⛽ Gasoline: {car.gasoline}\n"
                 f"⚙ Steering: {car.steering}\n"
                 f"👥 Capacity: {car.capacity}\n"
-                # f"🗂 Category: {car.category}\n"
+                f"🗂 Category: {car.category.name}\n"
                 f"📝 Description: {car.description}\n"
+            )
+
+            keyboard = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text="🚘 Rent", callback_data=f"rent_{car.id}")]
+                ]
             )
 
             if file_paths:
                 media = [InputMediaPhoto(media=FSInputFile(path)) for path in file_paths]
                 media[0].caption = caption
                 await message.answer_media_group(media=media)
+
+                await message.answer("Do you want to rent this car?", reply_markup=keyboard)
             else:
-                await message.answer(f"{caption}\nNo images available.")
+                await message.answer(f"{caption}\nNo images available.", reply_markup=keyboard)
+
         except Car.DoesNotExist:
-            await message.answer(f"Car not found!")
+            await message.answer("Car not found!")
     else:
         await message.answer('Welcome! Send me a car id.')
 

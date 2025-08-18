@@ -1,5 +1,5 @@
-from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DecimalField, DateTimeField
-from django.db.models.fields import CharField, DateField, IntegerField, TimeField, BigIntegerField
+from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DateTimeField
+from django.db.models.fields import CharField, DateField, IntegerField, TimeField, BigIntegerField, PositiveIntegerField
 
 
 class Payment(Model):
@@ -26,6 +26,9 @@ class Category(Model):
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Car(Model):
     class CapacityType(TextChoices):
@@ -46,7 +49,7 @@ class Car(Model):
     capacity = CharField(max_length=10, choices=CapacityType.choices)
     steering = CharField(max_length=15, choices=SteeringType.choices)
     gasoline = CharField(max_length=255)
-    price = DecimalField(max_digits=10, decimal_places=2, default=0)
+    price = PositiveIntegerField(default=0)
     main_image = ImageField(upload_to='main_image/%Y/%m/%d/')
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
