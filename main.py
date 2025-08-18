@@ -2,10 +2,12 @@ import asyncio
 import os
 
 import django
-from aiogram import Bot, Dispatcher
+from aiogram import Bot
 from aiogram.filters import CommandStart
 from aiogram.types import Message, InputMediaPhoto, FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton
 from asgiref.sync import sync_to_async
+
+from bot.dispatcher import dp
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "root.settings")
 django.setup()
@@ -14,7 +16,6 @@ from apps.models import Car
 from bot.core.config import conf
 
 bot = Bot(token=conf.bot.BOT_TOKEN)
-dp = Dispatcher()
 
 
 @dp.message(CommandStart())
