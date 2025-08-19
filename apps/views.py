@@ -3,11 +3,15 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from rest_framework.views import APIView
 
 from apps.filter import CarFilter
-from apps.models import Car, Category, Review, CarImages
+from apps.models import Car, Category, Review, CarImages, RentalOrder
 from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, \
-    ReviewUpdateModelSerializer, CarImagesModelSerializer
+    ReviewUpdateModelSerializer, CarImagesModelSerializer, BillingInfoModelSerializer, RentalInfoModelSerializer, \
+    PaymentModelSerializer, RentalOrderSerializer
 
 
 @extend_schema(tags=['category'])
@@ -144,3 +148,55 @@ class CarImagesDeleteAPIView(DestroyAPIView):
     serializer_class = CarImagesModelSerializer
     permission_classes = [IsAdminUser]
     lookup_field = 'pk'
+
+
+@extend_schema(tags=['billing-info'])
+class BillingInfoCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = BillingInfoModelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=['rental-info'])
+class RentalInfoCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = RentalInfoModelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=['payment'])
+class PaymentInfoCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = PaymentModelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+class RentalOrderListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        orders = RentalOrder.objects.filter(user=request.user)
+        serializer = RentalOrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = RentalOrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)

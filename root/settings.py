@@ -3,9 +3,7 @@ from datetime import timedelta
 from os.path import join
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-load_dotenv('.env')
+from bot.core.config import conf
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -69,11 +67,11 @@ WSGI_APPLICATION = 'root.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASS'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'NAME': conf.db.DB_NAME,
+        'USER': conf.db.DB_USER,
+        'PASSWORD': conf.db.DB_PASS,
+        'HOST': conf.db.DB_HOST,
+        'PORT': conf.db.DB_PORT,
     }
 }
 

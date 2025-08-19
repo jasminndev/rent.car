@@ -157,7 +157,7 @@ class BillingInfoModelSerializer(ModelSerializer):
 class RentalInfoModelSerializer(ModelSerializer):
     class Meta:
         model = RentalInfo
-        fields = ('pickup_location', 'pickup_date', 'pickup_time', 'dropoff_location', 'dropoff_date', 'dropoff_time', 'car')
+        fields = '__all__'
         read_only_fields = ('id',)
 
 
@@ -169,6 +169,7 @@ class RentalOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = RentalOrder
         fields = "__all__"
+        read_only_fields = ('id',)
 
     def create(self, validated_data):
         billing_data = validated_data.pop("billing")
