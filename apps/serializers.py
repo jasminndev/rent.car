@@ -38,32 +38,16 @@ class CarImagesModelSerializer(ModelSerializer):
         read_only_fields = ('id', 'created_at', 'updated_at')
 
 
-class BulkCarImagesSerializer(serializers.Serializer):
-    images = serializers.ListField(
-        child=serializers.ImageField(),
-        allow_empty=False
-    )
-    car = serializers.IntegerField(required=True)
-
-    def create(self, validated_data):
-        car_id = validated_data['car']
-        images = validated_data['images']
-        car_images = []
-        for image in images:
-            car_image = CarImages.objects.create(car_id=car_id, images=image)
-            car_images.append(car_image)
-        return car_images
-
-
 class CarModelSerializer(ModelSerializer):
     reviews = ReviewModelSerializer(many=True, read_only=True)
-    carimages_set = CarImagesModelSerializer(many=True, read_only=True)
+    carimages_set = CarImagesModelSerializer(many=True, required=False)
 
     class Meta:
         model = Car
         fields = (
-            'name', 'description', 'category', 'capacity', 'steering', 'gasoline', 'price', 'main_image', 'reviews',
-            'carimages_set')
+            'name', 'description', 'category', 'capacity', 'steering',
+            'gasoline', 'price', 'main_image', 'reviews', 'carimages_set'
+        )
         read_only_fields = ('id', 'created_at', 'updated_at', 'telegram_message_id')
 
     def validate_price(self, value):
@@ -74,8 +58,10 @@ class CarModelSerializer(ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['reviews'] = ReviewModelSerializer(instance.reviews.all(), many=True).data
-        data['carimages_set'] = CarImagesModelSerializer(instance.carimages_set.all().delete(),
-                                                         many=True).data if instance.carimages_set else None
+        data['carimages_set'] = CarImagesModelSerializer(
+            instance.carimages_set.all(),
+            many=True
+        ).data
         return data
 
     def create(self, validated_data):
@@ -129,12 +115,22 @@ class BillingInfoModelSerializer(serializers.ModelSerializer):
 
 
 class RentalInfoModelSerializer(serializers.ModelSerializer):
+    car = CarModelSerializer(read_only=True)
+    car_id = serializers.PrimaryKeyRelatedField(
+        queryset=Car.objects.all(), write_only=True, source="car"
+    )
+
     class Meta:
         model = RentalInfo
-        fields = (
-            "pickup_location", "pickup_date", "pickup_time",
-            "dropoff_location", "dropoff_date", "dropoff_time"
-        )
+        fields = ("pickup_location",
+                  "pickup_date",
+                  "pickup_time",
+                  "dropoff_location",
+                  "dropoff_date",
+                  "dropoff_time",
+                  "car",
+                  "car_id",
+                  )
         read_only_fields = ('id',)
 
 
@@ -172,7 +168,7 @@ class RentalOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RentalOrder
-        fields = ("id", "billing", "rental", "payment", "created_at")
+        fields = ("id", "billing", "rental", "payment", "created_at",)
         read_only_fields = ("id", "created_at")
 
     def create(self, validated_data):

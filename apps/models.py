@@ -44,7 +44,7 @@ class Car(Model):
 
 class CarImages(Model):
     images = ImageField(upload_to='car/%Y/%m/%d/')
-    car = ForeignKey('apps.Car', on_delete=CASCADE)
+    car = ForeignKey('apps.Car', on_delete=CASCADE, related_name='carimages_set')
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
