@@ -112,13 +112,39 @@ class ReviewUpdateModelSerializer(ReviewModelSerializer):
         read_only_fields = ('id', 'stars', 'user', 'car', 'created_at', 'updated_at',)
 
 
-class PaymentModelSerializer(ModelSerializer):
+class BillingInfoModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BillingInfo
+        fields = ('full_name', 'phone', 'address', 'city')
+        read_only_fields = ('id',)
+
+    def validate_phone(self, value):
+        phone = re.sub(r'\D', '', value)
+        pattern = r'^998(90|91|93|94|95|97|98|99|33|88|50|77)\d{7}$'
+        if not re.match(pattern, phone):
+            raise serializers.ValidationError(
+                'Telefon raqami quyidagi formatda bo‘lishi kerak: +998XXXXXXXXX'
+            )
+        return phone
+
+
+class RentalInfoModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RentalInfo
+        fields = (
+            "pickup_location", "pickup_date", "pickup_time",
+            "dropoff_location", "dropoff_date", "dropoff_time"
+        )
+        read_only_fields = ('id',)
+
+
+class PaymentModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentInfo
-        fields = ('expiration_date', 'card_holder', 'cvv', 'card_type',)
-        read_only_fields = ('id', 'created_at', 'user')
+        fields = ("method", "card_number", "expiry", "cvc", "holder")
+        read_only_fields = ('id', 'created_at',)
 
-    def validate_expiration_date(self, value):
+    def validate_expiry(self, value):
         digits = value.replace('-', '')
         if len(digits) == 4 and digits.isdigit():
             value = f"{digits[:2]}/{digits[2:]}"
@@ -127,7 +153,7 @@ class PaymentModelSerializer(ModelSerializer):
             raise ValidationError("Expiration date must be in the format MM/YY")
         return value
 
-    def validate_card_holder(self, value):
+    def validate_holder(self, value):
         import re
         if not re.match(r'^[A-Z ]+$', value.upper()):
             raise ValidationError("Card holder must be an uppercase letter")
@@ -139,28 +165,6 @@ class PaymentModelSerializer(ModelSerializer):
         return user
 
 
-class BillingInfoModelSerializer(ModelSerializer):
-    class Meta:
-        model = BillingInfo
-        fields = ('full_name', 'phone', 'address', 'city', 'user')
-        read_only_fields = ('id',)
-
-    def validate_phone(self, value):
-        phone = re.sub('\D', '', value)
-        pattern = r'^998(90|91|93|94|95|97|98|99|33|88|50|77)\d{7}$'
-
-        if not re.match(pattern, phone):
-            raise ValidationError('Telefon raqami quyidagi formatda bo‘lishi kerak: +998XXXXXXXXX')
-        return phone
-
-
-class RentalInfoModelSerializer(ModelSerializer):
-    class Meta:
-        model = RentalInfo
-        fields = '__all__'
-        read_only_fields = ('id',)
-
-
 class RentalOrderSerializer(serializers.ModelSerializer):
     billing = BillingInfoModelSerializer()
     rental = RentalInfoModelSerializer()
@@ -168,19 +172,24 @@ class RentalOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RentalOrder
-        fields = "__all__"
-        read_only_fields = ('id',)
+        fields = ("id", "billing", "rental", "payment", "created_at")
+        read_only_fields = ("id", "created_at")
 
     def create(self, validated_data):
         billing_data = validated_data.pop("billing")
         rental_data = validated_data.pop("rental")
         payment_data = validated_data.pop("payment")
 
-        billing = BillingInfo.objects.create(**billing_data)
+        user = self.context["request"].user
+
+        billing = BillingInfo.objects.create(user=user, **billing_data)
         rental = RentalInfo.objects.create(**rental_data)
         payment = PaymentInfo.objects.create(**payment_data)
 
         order = RentalOrder.objects.create(
-            billing=billing, rental=rental, payment=payment, **validated_data
+            user=user,
+            billing=billing,
+            rental=rental,
+            payment=payment
         )
         return order

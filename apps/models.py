@@ -107,6 +107,7 @@ class PaymentInfo(Model):
     expiry = CharField(max_length=5, blank=True, null=True)
     holder = CharField(max_length=100, blank=True, null=True)
     cvc = CharField(max_length=4, blank=True, null=True)
+    created_at = DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.method}"

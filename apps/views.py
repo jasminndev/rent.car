@@ -10,8 +10,7 @@ from rest_framework.views import APIView
 from apps.filter import CarFilter
 from apps.models import Car, Category, Review, CarImages, RentalOrder
 from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, \
-    ReviewUpdateModelSerializer, CarImagesModelSerializer, BillingInfoModelSerializer, RentalInfoModelSerializer, \
-    PaymentModelSerializer, RentalOrderSerializer
+    ReviewUpdateModelSerializer, CarImagesModelSerializer, RentalOrderSerializer
 
 
 @extend_schema(tags=['category'])
@@ -150,43 +149,9 @@ class CarImagesDeleteAPIView(DestroyAPIView):
     lookup_field = 'pk'
 
 
-@extend_schema(tags=['billing-info'])
-class BillingInfoCreateView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        serializer = BillingInfoModelSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=HTTP_201_CREATED)
-        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-
-
-@extend_schema(tags=['rental-info'])
-class RentalInfoCreateView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        serializer = RentalInfoModelSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=HTTP_201_CREATED)
-        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-
-
-@extend_schema(tags=['payment'])
-class PaymentInfoCreateView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        serializer = PaymentModelSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=HTTP_201_CREATED)
-        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-
-
+@extend_schema(tags=['rental-order'])
 class RentalOrderListCreateView(APIView):
+    serializer_class = RentalOrderSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -195,8 +160,10 @@ class RentalOrderListCreateView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = RentalOrderSerializer(data=request.data)
+        serializer = RentalOrderSerializer(
+            data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=HTTP_201_CREATED)
+            order = serializer.save()
+            return Response(RentalOrderSerializer(order).data, status=HTTP_201_CREATED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
