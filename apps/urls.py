@@ -3,7 +3,7 @@ from django.urls import path
 from apps.views import CarCreateAPIView, CategoryDeleteAPIView, CategoryCreateAPIView, CategoryListAPIView, \
     CategoryUpdateAPIView, CarDeleteAPIView, CarListAPIView, CarDetailAPIView, CarUpdateAPIView, \
     ReviewCreateAPIView, ReviewUpdateAPIView, ReviewDeleteAPIView, ReviewListAPIView, CarImagesCreateAPIView, \
-    CarImagesUpdateAPIView, CarImagesDeleteAPIView, RentalOrderListCreateView
+    CarImagesUpdateAPIView, CarImagesDeleteAPIView, RentalOrderListCreateView, Top5CarsListAPIView
 
 urlpatterns = [
     path('category-create', CategoryCreateAPIView.as_view()),
@@ -15,6 +15,7 @@ urlpatterns = [
     path('car-detail/<int:pk>', CarDetailAPIView.as_view()),
     path('car-update/<int:pk>', CarUpdateAPIView.as_view()),
     path('cars', CarListAPIView.as_view()),
+    path('top-cars', Top5CarsListAPIView.as_view()),
     path('review-create', ReviewCreateAPIView.as_view()),
     path('reviews', ReviewListAPIView.as_view()),
     path('review-update/<int:pk>', ReviewUpdateAPIView.as_view()),
