@@ -3,7 +3,7 @@ from datetime import timedelta
 from os.path import join
 from pathlib import Path
 
-from bot.core.config import conf
+from core.config import conf
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

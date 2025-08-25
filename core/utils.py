@@ -5,7 +5,7 @@ from sqlalchemy import select, delete as sqlalchemy_delete, update as sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncAttrs, create_async_engine, AsyncSession
 from sqlalchemy.orm import DeclarativeBase, declared_attr, sessionmaker
 
-from bot.core.config import conf
+from core.config import conf
 
 
 class Base(AsyncAttrs, DeclarativeBase):

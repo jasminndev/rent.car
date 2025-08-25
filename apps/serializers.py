@@ -2,6 +2,7 @@ import re
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import CharField
 from rest_framework.serializers import ModelSerializer
 
 from apps.models import Category, Car, Review, CarImages, PaymentInfo, BillingInfo, RentalInfo, RentalOrder
@@ -189,3 +190,19 @@ class RentalOrderSerializer(serializers.ModelSerializer):
             payment=payment
         )
         return order
+
+
+class RecentTransactionSerializer(ModelSerializer):
+    car_name = CharField(source="car.name")
+    car_category = CharField(source="car.category.name")
+
+    class Meta:
+        model = RentalInfo
+        fields = (
+            "car_name",
+            "car_category",
+            "pickup_date",
+            "dropoff_date",
+            "pickup_location",
+            "dropoff_location",
+        )

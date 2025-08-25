@@ -1,7 +1,6 @@
 from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
@@ -12,7 +11,7 @@ from rest_framework.views import APIView
 from apps.filter import CarFilter
 from apps.models import Car, Category, Review, CarImages, RentalOrder, RentalInfo
 from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, \
-    ReviewUpdateModelSerializer, CarImagesModelSerializer, RentalOrderSerializer
+    ReviewUpdateModelSerializer, CarImagesModelSerializer, RentalOrderSerializer, RecentTransactionSerializer
 
 
 @extend_schema(tags=['category'])
@@ -87,16 +86,14 @@ class CarUpdateAPIView(UpdateAPIView):
 
 
 @extend_schema(tags=['top-5-cars'])
-class Top5CarsListAPIView(ListAPIView):
-    queryset = Car.objects.all()
-    serializer_class = CarModelSerializer
-
-    @action(detail=False, methods=['get'])
-    def top_rentals(self, request):
-        top_cars = RentalInfo.objects.values('car__id', 'car__name', 'car__category__name') \
-                       .annotate(rental_count=Count('id')) \
-                       .order_by('-rental_count')[:5]
-
+class Top5CarsListAPIView(APIView):
+    def get(self, request):
+        top_cars = (
+            RentalInfo.objects
+            .values('car__id', 'car__name', 'car__category__name')
+            .annotate(rental_count=Count('id'))
+            .order_by('-rental_count')[:5]
+        )
         return Response(top_cars)
 
 
@@ -183,3 +180,11 @@ class RentalOrderListCreateView(APIView):
             order = serializer.save()
             return Response(RentalOrderSerializer(order).data, status=HTTP_201_CREATED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=['recent-transactions'])
+class RecentTransactionsAPIView(APIView):
+    def get(self, request):
+        transactions = RentalInfo.objects.all().order_by("-pickup_date", "-pickup_time")[:5]
+        serializer = RecentTransactionSerializer(transactions, many=True)
+        return Response(serializer.data)

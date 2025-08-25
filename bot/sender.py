@@ -6,7 +6,7 @@ from aiogram.types import InputMediaPhoto, FSInputFile
 from asgiref.sync import sync_to_async
 
 from apps.models import Car
-from bot.core.config import conf
+from core.config import conf
 
 
 def get_car_data(car: Car):

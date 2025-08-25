@@ -13,7 +13,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "root.settings")
 django.setup()
 
 from apps.models import Car
-from bot.core.config import conf
+from core.config import conf
 
 bot = Bot(token=conf.bot.BOT_TOKEN)
 
