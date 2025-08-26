@@ -1,12 +1,14 @@
+from typing import Text
+
+from aiogram import F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
 
-from authentication.models import User
 from bot.dispatcher import dp
 from bot.states import RentCarForm
 
 
-@dp.callback_query(lambda c: c.data.startswith("rent_"))
+@dp.callback_query(F.data.startswith("rent_"))
 async def process_rent_button(callback: CallbackQuery, state: FSMContext):
     car_id = int(callback.data.split("_")[1])
     await state.update_data(car_id=car_id)
@@ -65,7 +67,6 @@ async def confirm_order(message: Message, state: FSMContext):
         f"📍 Dropoff: {data['dropoff_location']} on {data['dropoff_date']} at {data['dropoff_time']}\n\n"
         f"💳 Payment: {data['payment_method']}"
     )
-
 
     await message.answer(summary)
     await state.clear()

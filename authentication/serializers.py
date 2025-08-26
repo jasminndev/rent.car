@@ -1,5 +1,6 @@
 import re
 
+from django.contrib.auth.hashers import make_password
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
 from rest_framework.relations import PrimaryKeyRelatedField
@@ -12,7 +13,7 @@ from authentication.models import User, Wishlist
 class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'phone_number', 'address', 'city', 'avatar', 'password',)
+        fields = ('first_name', 'last_name', 'phone_number', 'avatar', 'password')
 
     def validate_phone_number(self, value):
         phone = re.sub('\D', '', value)
@@ -36,19 +37,12 @@ class UserModelSerializer(ModelSerializer):
         if not re.search(r'[A-Za-z]', value):
             raise ValidationError('Password must contain at least one letter.')
 
-        return value
+        return make_password(value)
 
     def validate_avatar(self, value):
         if value and not value.name.lower().endswith(('.jpg', 'jpeg', 'png')):
             raise ValidationError('Avatar must be an image.')
         return value
-
-    def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = User(**validated_data)
-        user.set_password(password)
-        user.save()
-        return user
 
 
 class UserUpdateSerializer(UserModelSerializer):

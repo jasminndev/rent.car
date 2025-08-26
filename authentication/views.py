@@ -7,6 +7,7 @@ from authentication.serializers import UserModelSerializer, UserUpdateSerializer
     WishlistModelSerializer
 
 
+# AUTH
 @extend_schema(tags=['auth'])
 class UserCreateAPIView(CreateAPIView):
     queryset = User.objects.all()
@@ -42,6 +43,7 @@ class UserDeleteAPIView(DestroyAPIView):
     serializer_class = UserModelSerializer
 
 
+# PASSWORD
 @extend_schema(tags=['passwd'])
 class ChangePasswordAPIView(UpdateAPIView):
     queryset = User.objects.all()
@@ -49,6 +51,7 @@ class ChangePasswordAPIView(UpdateAPIView):
     serializer_class = ChangePasswordSerializer
 
 
+# WISHLIST
 @extend_schema(tags=['wishlist'])
 class WishlistCreateAPIView(CreateAPIView):
     serializer_class = WishlistModelSerializer

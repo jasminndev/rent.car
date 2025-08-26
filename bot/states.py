@@ -22,3 +22,4 @@ class RentCarForm(StatesGroup):
     card_cvc = State()
 
     confirm = State()
+    car_data = State()

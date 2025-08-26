@@ -57,8 +57,6 @@ class User(AbstractUser):
     last_name = CharField(max_length=35)
     avatar = ImageField(upload_to='avatars/%Y/%m/%d/', null=True, blank=True)
     phone_number = CharField(max_length=20, unique=True)
-    address = CharField(max_length=255)
-    city = CharField(max_length=50)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
     objects = CustomUserManager()
