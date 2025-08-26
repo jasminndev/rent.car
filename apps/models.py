@@ -1,10 +1,20 @@
-from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DateTimeField, \
+from ckeditor.fields import RichTextField
+from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, DateTimeField, \
     OneToOneField, DateField, TimeField
-from django.db.models.fields import CharField, BigIntegerField, PositiveIntegerField
+from django.db.models.fields import CharField, BigIntegerField, PositiveIntegerField, BooleanField
+
+
+class Region(Model):
+    name = CharField(max_length=50)
+
+
+class District(Model):
+    name = CharField(max_length=50)
+    region = ForeignKey(Region, on_delete=CASCADE, related_name='districts')
 
 
 class Category(Model):
-    name = CharField(max_length=100, db_index=True)
+    name = CharField(max_length=50, db_index=True)
     car_amount = PositiveIntegerField(default=0)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
@@ -24,26 +34,25 @@ class Car(Model):
         MANUAL = 'Manual', 'manual'
         POWER = 'Power', 'power'
         ELECTRIC = 'Electric', 'electric'
-        HYDRAULIC = 'Hydraulic', 'hydraulic'
 
     name = CharField(max_length=50)
-    description = TextField()
+    description = RichTextField()
     category = ForeignKey('apps.Category', on_delete=CASCADE, related_name='cars')
     capacity = CharField(max_length=10, choices=CapacityType.choices)
     steering = CharField(max_length=15, choices=SteeringType.choices)
     gasoline = CharField(max_length=255)
     price = PositiveIntegerField(default=0)
-    main_image = ImageField(upload_to='main_image/%Y/%m/%d/')
+    main_image = ImageField(upload_to='main_images/%Y/%m/%d/')
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
     telegram_message_id = BigIntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f'{self.category} - {self.name}'
+        return f'{self.name}'
 
 
 class CarImages(Model):
-    images = ImageField(upload_to='car/%Y/%m/%d/')
+    images = ImageField(upload_to='cars/%Y/%m/%d/')
     car = ForeignKey('apps.Car', on_delete=CASCADE, related_name='carimages_set')
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
@@ -59,21 +68,21 @@ class Review(Model):
 
     stars = CharField(max_length=10, choices=StarsNumber.choices)
     user = ForeignKey('authentication.User', on_delete=CASCADE, related_name='reviews')
-    text = TextField()
+    text = RichTextField()
     car = ForeignKey('apps.Car', on_delete=CASCADE, related_name='reviews')
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
+    is_edited = BooleanField(default=False)
 
 
 class BillingInfo(Model):
     user = ForeignKey('authentication.User', on_delete=CASCADE)
     full_name = CharField(max_length=100)
     phone = CharField(max_length=20)
-    address = CharField(max_length=255)
-    city = CharField(max_length=100)
+    district = ForeignKey('apps.District', on_delete=CASCADE, related_name='billing_infos')
 
     def __str__(self):
-        return f"{self.full_name} ({self.city})"
+        return f"{self.full_name} -> ({self.district.name})"
 
 
 class LocationChoices(TextChoices):
@@ -96,28 +105,28 @@ class RentalInfo(Model):
         return f"{self.car} | {self.pickup_location} → {self.dropoff_location}"
 
 
-class PaymentInfo(Model):
-    PAYMENT_METHODS = [
-        ("card", "Credit Card"),
-        ("paypal", "PayPal"),
-        ("btc", "Bitcoin"),
-    ]
-    method = CharField(max_length=20, choices=PAYMENT_METHODS)
-    card_number = CharField(max_length=16, blank=True, null=True)
-    expiry = CharField(max_length=5, blank=True, null=True)
-    holder = CharField(max_length=100, blank=True, null=True)
-    cvc = CharField(max_length=4, blank=True, null=True)
-    created_at = DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.method}"
+# class PaymentInfo(Model):
+#     PAYMENT_METHODS = [
+#         ("card", "Credit Card"),
+#         ("paypal", "PayPal"),
+#         ("btc", "Bitcoin"),
+#     ]
+#     method = CharField(max_length=20, choices=PAYMENT_METHODS)
+#     card_number = CharField(max_length=16, blank=True, null=True)
+#     expiry = CharField(max_length=5, blank=True, null=True)
+#     holder = CharField(max_length=100, blank=True, null=True)
+#     cvc = CharField(max_length=4, blank=True, null=True)
+#     created_at = DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return f"{self.method}"
 
 
 class RentalOrder(Model):
     user = ForeignKey('authentication.User', on_delete=CASCADE)
     billing = OneToOneField(BillingInfo, on_delete=CASCADE)
     rental = OneToOneField(RentalInfo, on_delete=CASCADE)
-    payment = OneToOneField(PaymentInfo, on_delete=CASCADE)
+    # payment = OneToOneField(PaymentInfo, on_delete=CASCADE)
     created_at = DateTimeField(auto_now_add=True)
 
     def __str__(self):

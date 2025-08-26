@@ -32,6 +32,27 @@ class ReviewModelSerializer(ModelSerializer):
         return data
 
 
+class ReviewUpdateModelSerializer(ReviewModelSerializer):
+    class Meta:
+        model = Review
+        fields = ('text', 'is_edited')
+        read_only_fields = ('id', 'stars', 'user', 'car', 'created_at', 'updated_at', 'is_edited')
+
+    def update(self, instance, validated_data):
+        old_text = instance.text
+        new_text = validated_data.get('text', old_text)
+
+        if new_text != old_text:
+            validated_data['is_edited'] = True
+
+        return super().update(instance, validated_data)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['user'] = UserModelSerializer(instance.user).data if instance.user else None
+        return data
+
+
 class CarImagesModelSerializer(ModelSerializer):
     class Meta:
         model = CarImages
@@ -90,13 +111,6 @@ class CarModelSerializer(ModelSerializer):
                 CarImages.objects.create(car=instance, **image_data)
 
         return instance
-
-
-class ReviewUpdateModelSerializer(ReviewModelSerializer):
-    class Meta:
-        model = Review
-        fields = ('text',)
-        read_only_fields = ('id', 'stars', 'user', 'car', 'created_at', 'updated_at',)
 
 
 class BillingInfoModelSerializer(serializers.ModelSerializer):
