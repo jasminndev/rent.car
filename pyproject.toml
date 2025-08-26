@@ -1,0 +1,48 @@
+[project]
+name = "education"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+
+dependencies = [
+    "aiofiles==24.1.0",
+    "aiogram==3.21.0",
+    "aiohappyeyeballs==2.6.1",
+    "aiohttp==3.12.15",
+    "aiosignal==1.4.0",
+    "annotated-types==0.7.0",
+    "asgiref==3.9.1",
+    "attrs==25.3.0",
+    "certifi==2025.8.3",
+    "Django==5.2.4",
+    "django-filter==25.1",
+    "django-unfold==0.63.0",
+    "djangorestframework==3.16.0",
+    "djangorestframework-simplejwt==5.5.1",
+    "dotenv==0.9.9",
+    "drf-spectacular==0.28.0",
+    "drf-spectacular-sidecar==2025.8.1",
+    "frozenlist==1.7.0",
+    "idna==3.10",
+    "inflection==0.5.1",
+    "jsonschema==4.25.0",
+    "jsonschema-specifications==2025.4.1",
+    "magic-filter==1.0.12",
+    "Markdown==3.8.2",
+    "multidict==6.6.4",
+    "pillow==11.3.0",
+    "propcache==0.3.2",
+    "psycopg2-binary==2.9.10",
+    "pydantic==2.11.7",
+    "pydantic-core==2.33.2",
+    "PyJWT==2.10.1",
+    "python-dotenv==1.1.1",
+    "PyYAML==6.0.2",
+    "referencing==0.36.2",
+    "rpds-py==0.26.0",
+    "sqlparse==0.5.3",
+    "typing-inspection==0.4.1",
+    "typing-extensions==4.14.1",
+    "uritemplate==4.2.0",
+    "yarl==1.20.1",
+]
