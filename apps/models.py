@@ -1,11 +1,11 @@
 from django.db.models import ImageField, Model, TextChoices, ForeignKey, CASCADE, TextField, DateTimeField, \
     OneToOneField, DateField, TimeField
-from django.db.models.fields import CharField, IntegerField, BigIntegerField, PositiveIntegerField
+from django.db.models.fields import CharField, BigIntegerField, PositiveIntegerField
 
 
 class Category(Model):
-    name = CharField(max_length=255)
-    car_amount = IntegerField(default=0)
+    name = CharField(max_length=100, db_index=True)
+    car_amount = PositiveIntegerField(default=0)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 

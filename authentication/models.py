@@ -65,6 +65,13 @@ class User(AbstractUser):
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
 
+    def __str__(self):
+        return self.first_name + " " + self.last_name
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class Wishlist(Model):
     user = ForeignKey('authentication.User', on_delete=CASCADE)
