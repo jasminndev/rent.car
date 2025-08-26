@@ -41,7 +41,7 @@ class CarImagesModelSerializer(ModelSerializer):
 
 class CarModelSerializer(ModelSerializer):
     reviews = ReviewModelSerializer(many=True, read_only=True)
-    carimages_set = CarImagesModelSerializer(many=True, required=False)
+    carimages_set = CarImagesModelSerializer(many=True, read_only=True)
 
     class Meta:
         model = Car
@@ -49,7 +49,7 @@ class CarModelSerializer(ModelSerializer):
             'name', 'description', 'category', 'capacity', 'steering',
             'gasoline', 'price', 'main_image', 'reviews', 'carimages_set'
         )
-        read_only_fields = ('id', 'created_at', 'updated_at', 'telegram_message_id')
+        read_only_fields = ('id', 'created_at', 'updated_at', 'telegram_message_id', 'carimages_set')
 
     def validate_price(self, value):
         if value < 0:
