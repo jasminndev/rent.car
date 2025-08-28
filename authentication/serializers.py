@@ -14,6 +14,7 @@ class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'phone_number', 'avatar', 'password')
+        read_only_fields = ('date_joined', 'last_login')
 
     def validate_phone_number(self, value):
         phone = re.sub('\D', '', value)
@@ -48,7 +49,7 @@ class UserModelSerializer(ModelSerializer):
 class UserUpdateSerializer(UserModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'avatar', 'address', 'city',)
+        fields = ('first_name', 'last_name', 'avatar',)
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():

@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager, AbstractUser
 from django.db.models import ImageField, Model, DateTimeField, ForeignKey, CASCADE
-from django.db.models.fields import CharField
+from django.db.models.fields import CharField, EmailField
 
 from apps.models import Car
 
@@ -56,13 +56,12 @@ class User(AbstractUser):
     first_name = CharField(max_length=35)
     last_name = CharField(max_length=35)
     avatar = ImageField(upload_to='avatars/%Y/%m/%d/', null=True, blank=True)
-    phone_number = CharField(max_length=20, unique=True)
-    created_at = DateTimeField(auto_now_add=True)
+    phone_number = CharField(max_length=20, unique=True, null=True, blank=True)
+    email = EmailField(unique=True, null=True, blank=True)
     updated_at = DateTimeField(auto_now=True)
     objects = CustomUserManager()
     username = None
-    email = None
-    USERNAME_FIELD = 'phone_number'
+    USERNAME_FIELD = 'phone_or_email'
     REQUIRED_FIELDS = []
 
     def __str__(self):
@@ -71,6 +70,10 @@ class User(AbstractUser):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+    @property
+    def phone_or_email(self):
+        return self.phone_number or self.email
 
 
 class Wishlist(Model):
