@@ -85,19 +85,19 @@ class BillingInfo(Model):
         return f"{self.full_name} -> ({self.district.name})"
 
 
-class LocationChoices(TextChoices):
-    TASHKENT_AIRPORT = "TAS_AIR", "Tashkent Airport"
-    TASHKENT_CITY = "TAS_CITY", "Tashkent City Center"
-    SAMARKAND_STATION = "SAM_ST", "Samarkand Station"
-    BUKHARA_DOWNTOWN = "BUH_DT", "Bukhara Downtown"
+class Location(Model):
+    name = CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class RentalInfo(Model):
-    car = ForeignKey("apps.Car", on_delete=CASCADE)
-    pickup_location = CharField(max_length=20, choices=LocationChoices.choices)
+    car = ForeignKey("apps.Car", on_delete=CASCADE, related_name='rental_infos')
+    pickup_location = ForeignKey('apps.Location', on_delete=CASCADE, related_name='pickup_locations')
     pickup_date = DateField()
     pickup_time = TimeField()
-    dropoff_location = CharField(max_length=20, choices=LocationChoices.choices)
+    dropoff_location = ForeignKey('apps.Location', on_delete=CASCADE, related_name='dropoff_locations')
     dropoff_date = DateField()
     dropoff_time = TimeField()
 
