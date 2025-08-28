@@ -13,23 +13,51 @@ from authentication.models import User, Wishlist
 class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'phone_number', 'avatar', 'password')
+        fields = (
+            'first_name',
+            'last_name',
+            'phone_number',
+            'email',
+            'avatar',
+            'password',
+        )
         read_only_fields = ('date_joined', 'last_login')
+        extra_kwargs = {
+            "password": {"write_only": True},
+        }
+
+    def validate(self, attrs):
+        phone = attrs.get("phone_number")
+        email = attrs.get("email")
+
+        if not phone and not email:
+            raise ValidationError("Telefon raqam yoki emaildan biri bo‘lishi kerak.")
+
+        if phone and email:
+            raise ValidationError("Faqat telefon raqam YOKI email kiritilishi kerak, ikkalasi emas.")
+
+        return attrs
 
     def validate_phone_number(self, value):
-        phone = re.sub('\D', '', value)
-        pattern = r'^998(90|91|93|94|95|97|98|99|33|88|50|77)\d{7}$'
+        if value:
+            phone = re.sub(r'\D', '', value)
+            pattern = r'^998(90|91|93|94|95|97|98|99|33|88|50|77)\d{7}$'
 
-        if not re.match(pattern, phone):
-            raise ValidationError('Telefon raqami quyidagi formatda bo‘lishi kerak: +998XXXXXXXXX')
+            if not re.match(pattern, phone):
+                raise ValidationError('Telefon raqami quyidagi formatda bo‘lishi kerak: +998XXXXXXXXX')
 
-        queryset = User.objects.filter(phone_number=phone)
-        if queryset.exists():
-            raise ValidationError('Bu telefon raqamli foydalanuvchi allaqachon mavjud.')
-        return phone
+            if User.objects.filter(phone_number=phone).exists():
+                raise ValidationError('Bu telefon raqamli foydalanuvchi allaqachon mavjud.')
+            return phone
+        return value
+
+    def validate_email(self, value):
+        if value and User.objects.filter(email=value).exists():
+            raise ValidationError('Bu email bilan foydalanuvchi allaqachon mavjud.')
+        return value
 
     def validate_password(self, value):
-        if len(value) < 3:
+        if len(value) < 4:
             raise ValidationError('Password must be at least 4 characters long.')
         if len(value) > 20:
             raise ValidationError('Password must be at most 20 characters long.')
