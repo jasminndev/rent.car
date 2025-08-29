@@ -67,13 +67,6 @@ class CustomTokenRefreshView(TokenRefreshView):
 
 
 ###################################### USER ######################################
-@extend_schema(tags=['auth'])
-class UserCreateAPIView(CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserModelSerializer
-    permission_classes = [AllowAny]
-
-
 @extend_schema(tags=['user'])
 class UserUpdateAPIView(UpdateAPIView):
     queryset = User.objects.all()

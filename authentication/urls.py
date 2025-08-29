@@ -1,13 +1,12 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from authentication.views import UserCreateAPIView, UserUpdateAPIView, ChangePasswordAPIView, \
+from authentication.views import UserUpdateAPIView, ChangePasswordAPIView, \
     UserDeleteAPIView, WishlistCreateAPIView, WishlistDeleteAPIView, WishlistListAPIView, \
     WishlistRetrieveAPIView
 
 # user
 urlpatterns = [
-    path('user-create', UserCreateAPIView.as_view()),
     path('user-update/<int:pk>', UserUpdateAPIView.as_view()),
     path('user-delete/<int:pk>', UserDeleteAPIView.as_view()),
     path('user-change-passwd/<int:pk>', ChangePasswordAPIView.as_view()),

@@ -5,7 +5,7 @@ from pathlib import Path
 
 from redis import Redis
 
-from core.config import conf, EmailConfig, RedisConfig
+from core.config import conf, EmailConfig, RedisConfig, DatabaseConfig
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -69,11 +69,11 @@ WSGI_APPLICATION = 'root.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': conf.db.DB_NAME,
-        'USER': conf.db.DB_USER,
-        'PASSWORD': conf.db.DB_PASS,
-        'HOST': conf.db.DB_HOST,
-        'PORT': conf.db.DB_PORT,
+        'NAME': DatabaseConfig.DB_NAME,
+        'USER': DatabaseConfig.DB_USER,
+        'PASSWORD': DatabaseConfig.DB_PASS,
+        'HOST': DatabaseConfig.DB_HOST,
+        'PORT': DatabaseConfig.DB_PORT,
     }
 }
 

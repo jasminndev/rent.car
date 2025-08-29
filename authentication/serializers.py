@@ -10,6 +10,7 @@ from rest_framework.serializers import ModelSerializer, Serializer
 
 from apps.models import Car
 from authentication.models import User, Wishlist
+from root.settings import redis
 
 
 class UserModelSerializer(ModelSerializer):
