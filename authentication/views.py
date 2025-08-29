@@ -4,6 +4,7 @@ from http import HTTPStatus
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from orjson import orjson
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, \
     GenericAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
@@ -18,6 +19,7 @@ from root.settings import redis
 
 
 ###################################### AUTH ######################################
+
 @extend_schema(tags=['auth'])
 class UserGenericAPIView(GenericAPIView):
     serializer_class = UserModelSerializer
@@ -79,6 +81,15 @@ class UserDeleteAPIView(DestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
     permission_classes = [IsAdminUser]
+
+
+@extend_schema(tags=['user'])
+class UserListAPIView(ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserModelSerializer
+    permission_classes = [IsAdminUser]
+    filter_backends = [SearchFilter]
+    search_fields = ['first_name', 'last_name', 'email']
 
 
 ###################################### PASSWORD ######################################
