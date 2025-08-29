@@ -8,7 +8,9 @@ asgiref==3.9.1
 attrs==25.3.0
 certifi==2025.8.3
 Django==5.2.4
+django-ckeditor==6.7.3
 django-filter==25.1
+django-js-asset==3.1.2
 django-unfold==0.63.0
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.1
@@ -23,6 +25,7 @@ jsonschema-specifications==2025.4.1
 magic-filter==1.0.12
 Markdown==3.8.2
 multidict==6.6.4
+orjson==3.11.3
 pillow==11.3.0
 propcache==0.3.2
 psycopg2-binary==2.9.10

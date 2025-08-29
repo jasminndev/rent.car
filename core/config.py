@@ -21,7 +21,7 @@ class DatabaseConfig:
 
 @dataclass
 class RedisConfig:
-    pass
+    REDIS_URL: str = os.getenv("REDIS_URL")
 
 
 @dataclass
@@ -32,10 +32,19 @@ class BotConfig:
 
 
 @dataclass
+class EmailConfig:
+    EMAIL_USER = os.getenv("EMAIL_USER")
+    EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+
+
+@dataclass
 class Configuration:
     db = DatabaseConfig()
     redis = RedisConfig()
     bot = BotConfig()
+    email = EmailConfig()
 
 
 conf = Configuration()

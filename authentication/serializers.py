@@ -1,6 +1,8 @@
 import re
 
 from django.contrib.auth.hashers import make_password
+from django.core.validators import validate_email
+from orjson import orjson
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
 from rest_framework.relations import PrimaryKeyRelatedField
@@ -13,47 +15,18 @@ from authentication.models import User, Wishlist
 class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = (
-            'first_name',
-            'last_name',
-            'phone_number',
-            'email',
-            'avatar',
-            'password',
-        )
+        fields = ('first_name', 'last_name', 'email', 'avatar', 'password', 'district',)
         read_only_fields = ('date_joined', 'last_login')
-        extra_kwargs = {
-            "password": {"write_only": True},
-        }
-
-    def validate(self, attrs):
-        phone = attrs.get("phone_number")
-        email = attrs.get("email")
-
-        if not phone and not email:
-            raise ValidationError("Telefon raqam yoki emaildan biri bo‘lishi kerak.")
-
-        if phone and email:
-            raise ValidationError("Faqat telefon raqam YOKI email kiritilishi kerak, ikkalasi emas.")
-
-        return attrs
-
-    def validate_phone_number(self, value):
-        if value:
-            phone = re.sub(r'\D', '', value)
-            pattern = r'^998(90|91|93|94|95|97|98|99|33|88|50|77)\d{7}$'
-
-            if not re.match(pattern, phone):
-                raise ValidationError('Telefon raqami quyidagi formatda bo‘lishi kerak: +998XXXXXXXXX')
-
-            if User.objects.filter(phone_number=phone).exists():
-                raise ValidationError('Bu telefon raqamli foydalanuvchi allaqachon mavjud.')
-            return phone
-        return value
 
     def validate_email(self, value):
-        if value and User.objects.filter(email=value).exists():
-            raise ValidationError('Bu email bilan foydalanuvchi allaqachon mavjud.')
+        try:
+            validate_email(value)
+        except ValidationError:
+            raise ValidationError('Elektron pochta manzili yaroqsiz.')
+
+        if User.objects.filter(email=value).exists():
+            raise ValidationError('Bu elektron pochta manzili ro‘yxatdan o‘tgan.')
+
         return value
 
     def validate_password(self, value):
@@ -71,6 +44,18 @@ class UserModelSerializer(ModelSerializer):
     def validate_avatar(self, value):
         if value and not value.name.lower().endswith(('.jpg', 'jpeg', 'png')):
             raise ValidationError('Avatar must be an image.')
+        return value
+
+
+class VerifyCodeSerializer(Serializer):
+    code = CharField(max_length=6)
+
+    def validate_code(self, value):
+        data = redis.get(value)
+        if not data:
+            raise ValidationError("Code notog'ri")
+        user_data = orjson.loads(data)
+        self.context['user_data'] = user_data
         return value
 
 

@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
 from rest_framework.serializers import ModelSerializer
 
-from apps.models import Category, Car, Review, CarImages, PaymentInfo, BillingInfo, RentalInfo, RentalOrder
+from apps.models import Category, Car, Review, CarImages, BillingInfo, RentalInfo, RentalOrder
 from authentication.serializers import UserModelSerializer
 
 
@@ -116,7 +116,7 @@ class CarModelSerializer(ModelSerializer):
 class BillingInfoModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingInfo
-        fields = ('full_name', 'phone', 'address', 'city')
+        fields = ('full_name', 'phone', 'district')
         read_only_fields = ('id',)
 
     def validate_phone(self, value):
@@ -149,59 +149,60 @@ class RentalInfoModelSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-class PaymentModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PaymentInfo
-        fields = ("method", "card_number", "expiry", "cvc", "holder")
-        read_only_fields = ('id', 'created_at',)
-
-    def validate_expiry(self, value):
-        digits = value.replace('-', '')
-        if len(digits) == 4 and digits.isdigit():
-            value = f"{digits[:2]}/{digits[2:]}"
-        import re
-        if not re.match(r'^(0[1-9]|1[0-2])/[0-9]{2}$', value):
-            raise ValidationError("Expiration date must be in the format MM/YY")
-        return value
-
-    def validate_holder(self, value):
-        import re
-        if not re.match(r'^[A-Z ]+$', value.upper()):
-            raise ValidationError("Card holder must be an uppercase letter")
-        return value.upper()
-
-    def save(self, **kwargs):
-        user = self.context['request'].user
-        user.save()
-        return user
+# class PaymentModelSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PaymentInfo
+#         fields = ("method", "card_number", "expiry", "cvc", "holder")
+#         read_only_fields = ('id', 'created_at',)
+#
+#     def validate_expiry(self, value):
+#         digits = value.replace('-', '')
+#         if len(digits) == 4 and digits.isdigit():
+#             value = f"{digits[:2]}/{digits[2:]}"
+#         import re
+#         if not re.match(r'^(0[1-9]|1[0-2])/[0-9]{2}$', value):
+#             raise ValidationError("Expiration date must be in the format MM/YY")
+#         return value
+#
+#     def validate_holder(self, value):
+#         import re
+#         if not re.match(r'^[A-Z ]+$', value.upper()):
+#             raise ValidationError("Card holder must be an uppercase letter")
+#         return value.upper()
+#
+#     def save(self, **kwargs):
+#         user = self.context['request'].user
+#         user.save()
+#         return user
 
 
 class RentalOrderSerializer(serializers.ModelSerializer):
     billing = BillingInfoModelSerializer()
     rental = RentalInfoModelSerializer()
-    payment = PaymentModelSerializer()
+
+    # payment = PaymentModelSerializer()
 
     class Meta:
         model = RentalOrder
-        fields = ("id", "billing", "rental", "payment", "created_at",)
+        fields = ("id", "billing", "rental", "created_at",)  # "payment"
         read_only_fields = ("id", "created_at")
 
     def create(self, validated_data):
         billing_data = validated_data.pop("billing")
         rental_data = validated_data.pop("rental")
-        payment_data = validated_data.pop("payment")
+        # payment_data = validated_data.pop("payment")
 
         user = self.context["request"].user
 
         billing = BillingInfo.objects.create(user=user, **billing_data)
         rental = RentalInfo.objects.create(**rental_data)
-        payment = PaymentInfo.objects.create(**payment_data)
+        # payment = PaymentInfo.objects.create(**payment_data)
 
         order = RentalOrder.objects.create(
             user=user,
             billing=billing,
             rental=rental,
-            payment=payment
+            # payment=payment
         )
         return order
 
