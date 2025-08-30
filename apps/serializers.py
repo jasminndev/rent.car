@@ -15,10 +15,6 @@ class CategoryModelSerializer(ModelSerializer):
         fields = ('name', 'car_amount')
         read_only_fields = ('id', 'created_at', 'updated_at')
 
-    def validate_card_amount(self, value):
-        if value < 0:
-            return ValidationError('The card amount cannot be negative!')
-
 
 class ReviewModelSerializer(ModelSerializer):
     class Meta:
