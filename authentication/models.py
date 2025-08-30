@@ -42,7 +42,7 @@ class User(AbstractUser):
     last_name = CharField(max_length=35)
     avatar = ImageField(upload_to='avatars/%Y/%m/%d/', null=True, blank=True)
     email = EmailField(unique=True)
-    district = ForeignKey('apps.District', on_delete=CASCADE, related_name='users', null=True, blank=True)
+    # district = ForeignKey('apps.District', on_delete=CASCADE, related_name='users')
     updated_at = DateTimeField(auto_now=True)
     objects = CustomerUser()
     username = None

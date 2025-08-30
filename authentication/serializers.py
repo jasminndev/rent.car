@@ -1,8 +1,8 @@
+import json
 import re
 
 from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
-from orjson import orjson
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
 from rest_framework.relations import PrimaryKeyRelatedField
@@ -16,7 +16,7 @@ from root.settings import redis
 class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'avatar', 'password', 'district',)
+        fields = ('first_name', 'last_name', 'email', 'avatar', 'password',)
         read_only_fields = ('id', 'date_joined', 'updated_at')
 
     def validate_email(self, value):
@@ -55,7 +55,7 @@ class VerifyCodeSerializer(Serializer):
         data = redis.get(value)
         if not data:
             raise ValidationError("Code notog'ri")
-        user_data = orjson.loads(data)
+        user_data = json.loads(data)
         self.context['user_data'] = user_data
         return value
 

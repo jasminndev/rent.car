@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
@@ -11,10 +11,11 @@ from rest_framework.views import APIView
 from apps.filter import CarFilter
 from apps.models import Car, Category, Review, CarImages, RentalOrder, RentalInfo, Region, District
 from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, \
-    ReviewUpdateModelSerializer, CarImagesModelSerializer, RentalOrderSerializer, RecentTransactionSerializer, \
-    RegionModelSerializer, DistrictModelSerializer
+    ReviewUpdateModelSerializer, CarImagesModelSerializer, RentalOrderSerializer, RegionModelSerializer, \
+    DistrictModelSerializer, RecentTransactionSerializer
 
 
+########################################## CATEGORY ##############################################
 @extend_schema(tags=['category'])
 class CategoryCreateAPIView(CreateAPIView):
     queryset = Category.objects.all()
@@ -26,7 +27,6 @@ class CategoryCreateAPIView(CreateAPIView):
 class CategoryListAPIView(ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategoryModelSerializer
-    permission_classes = [AllowAny]
 
 
 @extend_schema(tags=['category'])
@@ -45,6 +45,7 @@ class CategoryUpdateAPIView(UpdateAPIView):
     lookup_field = 'pk'
 
 
+########################################## CAR ##############################################
 @extend_schema(tags=['car'])
 class CarCreateAPIView(CreateAPIView):
     serializer_class = CarModelSerializer
@@ -56,7 +57,6 @@ class CarCreateAPIView(CreateAPIView):
 class CarListAPIView(ListAPIView):
     queryset = Car.objects.all()
     serializer_class = CarModelSerializer
-    permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = CarFilter
     search_fields = ['name']
@@ -74,7 +74,6 @@ class CarDeleteAPIView(DestroyAPIView):
 class CarDetailAPIView(RetrieveAPIView):
     queryset = Car.objects.all()
     serializer_class = CarModelSerializer
-    permission_classes = [AllowAny]
     lookup_field = 'pk'
 
 
@@ -86,8 +85,12 @@ class CarUpdateAPIView(UpdateAPIView):
     lookup_field = 'pk'
 
 
+########################################## STATISTICS ##############################################
 @extend_schema(tags=['top-5-cars'])
 class Top5CarsListAPIView(APIView):
+    serializer_class = CarModelSerializer
+    queryset = Car.objects.all()
+
     def get(self, request):
         top_cars = (
             RentalInfo.objects
@@ -98,11 +101,19 @@ class Top5CarsListAPIView(APIView):
         return Response(top_cars)
 
 
+@extend_schema(tags=['recent-transactions'])
+class RecentTransactionsAPIView(APIView):
+    def get(self, request):
+        transactions = RentalInfo.objects.all().order_by("-pickup_date", "-pickup_time")[:5]
+        serializer = RecentTransactionSerializer(transactions, many=True)
+        return Response(serializer.data)
+
+
+########################################## REVIEW ##############################################
 @extend_schema(tags=['review'])
 class ReviewCreateAPIView(CreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewModelSerializer
-    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -111,7 +122,6 @@ class ReviewCreateAPIView(CreateAPIView):
 @extend_schema(tags=['review'])
 class ReviewUpdateAPIView(UpdateAPIView):
     serializer_class = ReviewUpdateModelSerializer
-    permission_classes = [IsAuthenticated]
     lookup_field = 'pk'
 
     def get_queryset(self):
@@ -122,7 +132,6 @@ class ReviewUpdateAPIView(UpdateAPIView):
 class ReviewListAPIView(ListAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewModelSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Review.objects.filter(user=self.request.user).select_related('car').order_by('-created_at')
@@ -136,6 +145,7 @@ class ReviewDeleteAPIView(DestroyAPIView):
     lookup_field = 'pk'
 
 
+########################################## CAR-IMAGES ##############################################
 @extend_schema(tags=['car-images'])
 class CarImagesCreateAPIView(CreateAPIView):
     queryset = CarImages.objects.all()
@@ -163,10 +173,10 @@ class CarImagesDeleteAPIView(DestroyAPIView):
     lookup_field = 'pk'
 
 
+########################################## RENT ##############################################
 @extend_schema(tags=['rental-order'])
 class RentalOrderListCreateView(APIView):
     serializer_class = RentalOrderSerializer
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         orders = RentalOrder.objects.filter(user=request.user)
@@ -181,14 +191,6 @@ class RentalOrderListCreateView(APIView):
             order = serializer.save()
             return Response(RentalOrderSerializer(order).data, status=HTTP_201_CREATED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-
-
-@extend_schema(tags=['recent-transactions'])
-class RecentTransactionsAPIView(APIView):
-    def get(self, request):
-        transactions = RentalInfo.objects.all().order_by("-pickup_date", "-pickup_time")[:5]
-        serializer = RecentTransactionSerializer(transactions, many=True)
-        return Response(serializer.data)
 
 
 ########################################## REGION ##############################################

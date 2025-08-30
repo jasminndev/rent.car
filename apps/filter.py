@@ -1,5 +1,4 @@
 from django_filters import FilterSet, NumberFilter, CharFilter
-from rest_framework.filters import SearchFilter
 
 from apps.models import Car
 
@@ -13,10 +12,3 @@ class CarFilter(FilterSet):
     class Meta:
         model = Car
         fields = ('price_min', 'price_max', 'capacity', 'category')
-
-
-class CarSearchFilter(SearchFilter):
-    def get_search_fields(self, view, request):
-        if request.query_params.get('name_only'):
-            return ['name']
-        return super().get_search_fields(view, request)

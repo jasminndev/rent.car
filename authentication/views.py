@@ -1,9 +1,9 @@
+import json
 import random
 from http import HTTPStatus
 
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
-from orjson import orjson
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, \
     GenericAPIView
@@ -30,8 +30,8 @@ class UserGenericAPIView(GenericAPIView):
         user = serializer.validated_data
         code = str(random.randrange(10 ** 5, 10 ** 6))
         send_code_email.delay(user, code)
-        redis.set(code, orjson.dumps(user))
-        return Response({'message': 'Tastiqlash kodi jonatilid'}, status=HTTPStatus.OK)
+        redis.set(code, json.dumps(user))
+        return Response({'message': "Tasdiqlash kodi jo'natildi"}, status=HTTPStatus.OK)
 
 
 @extend_schema(tags=['auth'])
