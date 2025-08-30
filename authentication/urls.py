@@ -3,7 +3,8 @@ from rest_framework.generics import ListAPIView
 
 from authentication.views import UserUpdateAPIView, ChangePasswordAPIView, \
     UserDeleteAPIView, WishlistCreateAPIView, WishlistDeleteAPIView, WishlistListAPIView, \
-    WishlistRetrieveAPIView, CustomTokenObtainPairView, CustomTokenRefreshView, UserGenericAPIView
+    WishlistRetrieveAPIView, CustomTokenObtainPairView, CustomTokenRefreshView, UserGenericAPIView, \
+    VerifyCodeGenericAPIView
 
 # auth
 urlpatterns = [
@@ -14,10 +15,13 @@ urlpatterns = [
 
 # user
 urlpatterns += [
+    path('user-create', UserGenericAPIView.as_view()),
     path('user-update/<int:pk>', UserUpdateAPIView.as_view()),
     path('user-delete/<int:pk>', UserDeleteAPIView.as_view()),
     path('users', ListAPIView.as_view()),
     path('user-change-passwd/<int:pk>', ChangePasswordAPIView.as_view()),
+    path('verify/code', VerifyCodeGenericAPIView.as_view()),
+
 ]
 
 # wishlist

@@ -4,27 +4,61 @@ from apps.views import CarCreateAPIView, CategoryDeleteAPIView, CategoryCreateAP
     CategoryUpdateAPIView, CarDeleteAPIView, CarListAPIView, CarDetailAPIView, CarUpdateAPIView, \
     ReviewCreateAPIView, ReviewUpdateAPIView, ReviewDeleteAPIView, ReviewListAPIView, CarImagesCreateAPIView, \
     CarImagesUpdateAPIView, CarImagesDeleteAPIView, RentalOrderListCreateView, Top5CarsListAPIView, \
-    RecentTransactionsAPIView
+    RecentTransactionsAPIView, RegionCreateAPIView, RegionDeleteAPIView, RegionUpdateAPIView, RegionListAPIView, \
+    DistrictCreateAPIView, DistrictDeleteAPIView, DistrictUpdateAPIView, DistrictListAPIView
 
+################################### CATEGORY ###################################
 urlpatterns = [
     path('category-create', CategoryCreateAPIView.as_view()),
     path('category-delete/<int:pk>', CategoryDeleteAPIView.as_view()),
     path('category-update/<int:pk>', CategoryUpdateAPIView.as_view()),
     path('categories', CategoryListAPIView.as_view()),
+]
+
+################################### CAR ###################################
+urlpatterns += [
     path('car-create', CarCreateAPIView.as_view()),
     path('car-delete/<int:pk>', CarDeleteAPIView.as_view()),
     path('car-detail/<int:pk>', CarDetailAPIView.as_view()),
     path('car-update/<int:pk>', CarUpdateAPIView.as_view()),
     path('cars', CarListAPIView.as_view()),
+]
+
+################################### STATISTICS ###################################
+urlpatterns += [
     path('top-cars', Top5CarsListAPIView.as_view()),
     path('recent-transactions', RecentTransactionsAPIView.as_view()),
+    path('rental-orders', RentalOrderListCreateView.as_view()),
+
+]
+
+################################### REVIEW ###################################
+urlpatterns += [
     path('review-create', ReviewCreateAPIView.as_view()),
     path('reviews', ReviewListAPIView.as_view()),
     path('review-update/<int:pk>', ReviewUpdateAPIView.as_view()),
     path('review-delete/<int:pk>', ReviewDeleteAPIView.as_view()),
+]
+
+################################### CAR-IMAGES ###################################
+urlpatterns += [
     path('car-images-create', CarImagesCreateAPIView.as_view()),
     path('car-images-update/<int:pk>', CarImagesUpdateAPIView.as_view()),
     path('car-images-delete/<int:pk>', CarImagesDeleteAPIView.as_view()),
-    path('rental-orders', RentalOrderListCreateView.as_view()),
+]
 
+################################### REGION ###################################
+urlpatterns += [
+    path('region-create', RegionCreateAPIView.as_view()),
+    path('region-delete/<int:pk>', RegionDeleteAPIView.as_view()),
+    path('region-update/<int:pk>', RegionUpdateAPIView.as_view()),
+    path('regions', RegionListAPIView.as_view()),
+]
+
+################################### DISTRICT ###################################
+urlpatterns += [
+    path('district-create', DistrictCreateAPIView.as_view()),
+    path('district-delete/<int:pk>', DistrictDeleteAPIView.as_view()),
+    path('district-update/<int:pk>', DistrictUpdateAPIView.as_view()),
+    path('districts', DistrictListAPIView.as_view()),
 ]

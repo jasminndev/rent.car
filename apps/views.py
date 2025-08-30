@@ -9,9 +9,10 @@ from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
 from apps.filter import CarFilter
-from apps.models import Car, Category, Review, CarImages, RentalOrder, RentalInfo
+from apps.models import Car, Category, Review, CarImages, RentalOrder, RentalInfo, Region, District
 from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, \
-    ReviewUpdateModelSerializer, CarImagesModelSerializer, RentalOrderSerializer, RecentTransactionSerializer
+    ReviewUpdateModelSerializer, CarImagesModelSerializer, RentalOrderSerializer, RecentTransactionSerializer, \
+    RegionModelSerializer, DistrictModelSerializer
 
 
 @extend_schema(tags=['category'])
@@ -188,3 +189,64 @@ class RecentTransactionsAPIView(APIView):
         transactions = RentalInfo.objects.all().order_by("-pickup_date", "-pickup_time")[:5]
         serializer = RecentTransactionSerializer(transactions, many=True)
         return Response(serializer.data)
+
+
+########################################## REGION ##############################################
+@extend_schema(tags=['region'])
+class RegionCreateAPIView(CreateAPIView):
+    serializer_class = RegionModelSerializer
+    queryset = Region.objects.all()
+    permission_classes = [IsAdminUser]
+
+
+@extend_schema(tags=['region'])
+class RegionUpdateAPIView(UpdateAPIView):
+    serializer_class = RegionModelSerializer
+    queryset = Region.objects.all()
+    permission_classes = [IsAdminUser]
+    lookup_field = 'pk'
+
+
+@extend_schema(tags=['region'])
+class RegionDeleteAPIView(DestroyAPIView):
+    serializer_class = RegionModelSerializer
+    queryset = Region.objects.all()
+    permission_classes = [IsAdminUser]
+    lookup_field = 'pk'
+
+
+class RegionListAPIView(ListAPIView):
+    serializer_class = RegionModelSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Region.objects.all()
+
+
+########################################## DISTRICT ##############################################
+@extend_schema(tags=['district'])
+class DistrictCreateAPIView(CreateAPIView):
+    serializer_class = DistrictModelSerializer
+    queryset = District.objects.all()
+    permission_classes = [IsAdminUser]
+
+
+@extend_schema(tags=['district'])
+class DistrictUpdateAPIView(UpdateAPIView):
+    serializer_class = DistrictModelSerializer
+    queryset = District.objects.all()
+    permission_classes = [IsAdminUser]
+    lookup_field = 'pk'
+
+
+@extend_schema(tags=['district'])
+class DistrictDeleteAPIView(DestroyAPIView):
+    serializer_class = DistrictModelSerializer
+    queryset = District.objects.all()
+    permission_classes = [IsAdminUser]
+    lookup_field = 'pk'
+
+
+@extend_schema(tags=['district'])
+class DistrictListAPIView(ListAPIView):
+    serializer_class = DistrictModelSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = District.objects.all()

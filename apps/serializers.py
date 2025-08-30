@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
 from rest_framework.serializers import ModelSerializer
 
-from apps.models import Category, Car, Review, CarImages, BillingInfo, RentalInfo, RentalOrder
+from apps.models import Category, Car, Review, CarImages, BillingInfo, RentalInfo, RentalOrder, Region, District
 from authentication.serializers import UserModelSerializer
 
 
@@ -221,3 +221,17 @@ class RecentTransactionSerializer(ModelSerializer):
             "pickup_location",
             "dropoff_location",
         )
+
+
+class RegionModelSerializer(ModelSerializer):
+    class Meta:
+        model = Region
+        fields = ("id", "name")
+        read_only_fields = ("id",)
+
+
+class DistrictModelSerializer(ModelSerializer):
+    class Meta:
+        model = District
+        fields = ("id", "name", "region")
+        read_only_fields = ("id",)
