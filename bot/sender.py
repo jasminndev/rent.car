@@ -39,7 +39,7 @@ async def _send(car: Car):
         f"👥 Capacity: {car_data['capacity']}\n"
         f"⚙ Steering: {car_data['steering']}\n"
         f"⛽ Gasoline: {car_data['gasoline']}\n"
-        f"💰 Price: {car_data['price']}\n\n"
+        f"💰 Price: ${car_data['price']}\n\n"
         f"[For more information]({link})"
     )
     if car_data['main_image_path']:
@@ -79,7 +79,7 @@ async def _update(car: Car):
         f"👥 Capacity: {car_data['capacity']}\n"
         f"⚙ Steering: {car_data['steering']}\n"
         f"⛽ Gasoline: {car_data['gasoline']}\n"
-        f"💰 Price: {car_data['price']}\n\n"
+        f"💰 Price: ${car_data['price']}\n\n"
         f"📝 Description: {car_data['description']}\n"
         f"[View in bot]({link})"
     )

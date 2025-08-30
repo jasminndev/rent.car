@@ -51,7 +51,7 @@ async def start(message: Message):
 
             caption = (
                 f"🚗 Name: {car.name}\n"
-                f"💰 Price: {car.price}\n"
+                f"💰 Price: ${car.price}\n"
                 f"⛽ Gasoline: {car.gasoline}\n"
                 f"⚙ Steering: {car.steering}\n"
                 f"👥 Capacity: {car.capacity}\n"

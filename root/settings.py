@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'drf_spectacular_sidecar',
     # JWT
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
 
 ]
 
