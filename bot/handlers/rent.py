@@ -1,6 +1,6 @@
 from aiogram import F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import CallbackQuery, Message
 
 from bot.dispatcher import dp
 from bot.states import RentCarForm
@@ -8,62 +8,102 @@ from bot.states import RentCarForm
 
 @dp.callback_query(F.data.startswith("rent_"))
 async def process_rent_button(callback: CallbackQuery, state: FSMContext):
-    car_id = int(callback.data.split("_")[1])
-    await state.update_data(car_id=car_id)
-    await state.set_state(RentCarForm.name)
-    await callback.message.edit_text("📝 Please enter your full name:")
+    try:
+        car_id = int(callback.data.split("_")[1])
+        await state.update_data(car_id=car_id)
+        await state.set_state(RentCarForm.name)
+        await callback.message.edit_text("📝 Please enter your full name:")
+    except (IndexError, ValueError):
+        await callback.message.answer("Error: Invalid car ID!")
+        await callback.answer()
 
 
 @dp.message(RentCarForm.name)
 async def process_name(message: Message, state: FSMContext):
-    await state.update_data(name=message.text)
-    await state.set_state(RentCarForm.phone)
+    if not message.text.strip():
+        await message.answer("Error: Name cannot be empty. Please enter your full name:")
+        return
+    await state.update_data(name=message.text.strip())
     await message.answer("📞 Enter your phone number:")
+    await state.set_state(RentCarForm.phone)
 
 
 @dp.message(RentCarForm.phone)
-async def process_phone(message: Message, state: FSMContext):
-    await state.update_data(phone=message.text)
-    await state.set_state(RentCarForm.address)
-    await message.answer("🏠 Enter your address:")
+async def process_city(message: Message, state: FSMContext):
+    if not message.text.strip():
+        await message.answer("Error: Phone number cannot be empty. Please enter your phone number:")
+        return
+    await state.update_data(city=message.text.strip())
+    await message.answer("📍 Enter pickup location:")
+    await state.set_state(RentCarForm.pickup_location)
 
 
-@dp.message(RentCarForm.address)
-async def process_address(message: Message, state: FSMContext):
-    await state.update_data(address=message.text)
-    await state.set_state(RentCarForm.city)
-    await message.answer("🌆 Enter your town / city:")
+@dp.message(RentCarForm.pickup_location)
+async def process_pickup_location(message: Message, state: FSMContext):
+    if not message.text.strip():
+        await message.answer("Error: Pickup location cannot be empty. Please enter pickup location:")
+        return
+    await state.update_data(pickup_location=message.text.strip())
+    await message.answer("📅 Enter pickup date (YYYY-MM-DD):")
+    await state.set_state(RentCarForm.pickup_date)
 
 
-@dp.message(RentCarForm.dropoff_time)
-async def ask_payment_method(message: Message, state: FSMContext):
-    await state.update_data(dropoff_time=message.text)
+@dp.message(RentCarForm.pickup_date)
+async def process_pickup_date(message: Message, state: FSMContext):
+    if not message.text.strip():
+        await message.answer("Error: Pickup date cannot be empty. Please enter pickup date (YYYY-MM-DD):")
+        return
+    await state.update_data(pickup_date=message.text.strip())
+    await message.answer("⏰ Enter pickup time (HH:MM):")
+    await state.set_state(RentCarForm.pickup_time)
 
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="💳 Credit Card", callback_data="pay_card")],
-            [InlineKeyboardButton(text="💲 PayPal", callback_data="pay_paypal")],
-        ]
-    )
-    await message.answer("💰 Choose a payment method:", reply_markup=keyboard)
-    await state.set_state(RentCarForm.payment_method)
+
+@dp.message(RentCarForm.pickup_time)
+async def process_pickup_time(message: Message, state: FSMContext):
+    if not message.text.strip():
+        await message.answer("Error: Pickup time cannot be empty. Please enter pickup time (HH:MM):")
+        return
+    await state.update_data(pickup_time=message.text.strip())
+    await message.answer("📍 Enter dropoff location:")
+    await state.set_state(RentCarForm.dropoff_location)
+
+
+@dp.message(RentCarForm.dropoff_location)
+async def process_dropoff_location(message: Message, state: FSMContext):
+    if not message.text.strip():
+        await message.answer("Error: Dropoff location cannot be empty. Please enter dropoff location:")
+        return
+    await state.update_data(dropoff_location=message.text.strip())
+    await message.answer("📅 Enter dropoff date (YYYY-MM-DD):")
+    await state.set_state(RentCarForm.dropoff_date)
+
+
+@dp.message(RentCarForm.dropoff_date)
+async def process_dropoff_date(message: Message, state: FSMContext):
+    if not message.text.strip():
+        await message.answer("Error: Dropoff date cannot be empty. Please enter dropoff date (YYYY-MM-DD):")
+        return
+    await state.update_data(dropoff_date=message.text.strip())
+    await message.answer("⏰ Enter dropoff time (HH:MM):")
+    await state.set_state(RentCarForm.dropoff_time)
 
 
 @dp.message(RentCarForm.card_cvc)
-async def confirm_order(message: Message, state: FSMContext):
-    await state.update_data(card_cvc=message.text)
+async def process_card_cvc(message: Message, state: FSMContext):
+    if not message.text.strip():
+        await message.answer("Error: Card CVC cannot be empty. Please enter card CVC:")
+        return
+    await state.update_data(card_cvc=message.text.strip())
     data = await state.get_data()
-
     summary = (
         f"✅ Rental Summary\n\n"
-        f"👤 {data['name']}\n"
-        f"📞 {data['phone']}\n"
-        f"🏠 {data['address']}, {data['city']}\n\n"
-        f"🚘 Car ID: {data['car_id']}\n"
-        f"📍 Pickup: {data['pickup_location']} on {data['pickup_date']} at {data['pickup_time']}\n"
-        f"📍 Dropoff: {data['dropoff_location']} on {data['dropoff_date']} at {data['dropoff_time']}\n\n"
-        f"💳 Payment: {data['payment_method']}"
+        f"👤 {data.get('name', 'N/A')}\n"
+        f"📞 {data.get('phone', 'N/A')}\n"
+        f"🏠 {data.get('address', 'N/A')}, {data.get('city', 'N/A')}\n\n"
+        f"🚘 Car ID: {data.get('car_id', 'N/A')}\n"
+        f"📍 Pickup: {data.get('pickup_location', 'N/A')} on {data.get('pickup_date', 'N/A')} at {data.get('pickup_time', 'N/A')}\n"
+        f"📍 Dropoff: {data.get('dropoff_location', 'N/A')} on {data.get('dropoff_date', 'N/A')} at {data.get('dropoff_time', 'N/A')}\n\n"
+        f"💳 Payment: {data.get('payment_method', 'N/A')} (Card ending {data.get('card_number', 'N/A')[-4:]})"
     )
-
     await message.answer(summary)
     await state.clear()

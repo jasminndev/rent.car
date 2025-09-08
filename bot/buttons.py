@@ -10,9 +10,43 @@ def build_button(buttons: list[list[str]]) -> InlineKeyboardBuilder:
     return ikb
 
 
-def get_add_view_keyboard():
-    buttons = [
-        [_("⏬ Rent") ],
-        [_("⬅️ Back")]
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+locations_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="🛫 Airport", callback_data="loc_airport")],
+        [InlineKeyboardButton(text="🏙 Downtown", callback_data="loc_downtown")],
+        [InlineKeyboardButton(text="🏘 Suburb", callback_data="loc_suburb")],
     ]
-    return build_button(buttons).as_markup()
+)
+
+date_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="2025-09-08", callback_data="date_2025-09-08"),
+         InlineKeyboardButton(text="2025-09-09", callback_data="date_2025-09-09"),
+         InlineKeyboardButton(text="2025-09-10", callback_data="date_2025-09-10")],
+        [InlineKeyboardButton(text="2025-09-11", callback_data="date_2025-09-11"),
+         InlineKeyboardButton(text="2025-09-12", callback_data="date_2025-09-12"),
+         InlineKeyboardButton(text="2025-09-13", callback_data="date_2025-09-13")],
+    ]
+)
+
+time_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="09:00", callback_data="time_09:00"),
+         InlineKeyboardButton(text="09:15", callback_data="time_09:15"),
+         InlineKeyboardButton(text="09:30", callback_data="time_09:30"),
+         InlineKeyboardButton(text="09:45", callback_data="time_09:45")],
+        [InlineKeyboardButton(text="10:00", callback_data="time_10:00"),
+         InlineKeyboardButton(text="10:15", callback_data="time_10:15"),
+         InlineKeyboardButton(text="10:30", callback_data="time_10:30"),
+         InlineKeyboardButton(text="10:45", callback_data="time_10:45")],
+    ]
+)
+
+payment_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="💳 Credit Card", callback_data="pay_card")],
+        [InlineKeyboardButton(text="💲 PayPal", callback_data="pay_paypal")],
+    ]
+)
