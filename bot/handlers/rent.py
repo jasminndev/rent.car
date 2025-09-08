@@ -10,30 +10,29 @@ from bot.states import RentCarForm
 async def process_rent_button(callback: CallbackQuery, state: FSMContext):
     car_id = int(callback.data.split("_")[1])
     await state.update_data(car_id=car_id)
-
-    await callback.message.answer("📝 Please enter your full name:")
     await state.set_state(RentCarForm.name)
+    await callback.message.edit_text("📝 Please enter your full name:")
 
 
 @dp.message(RentCarForm.name)
 async def process_name(message: Message, state: FSMContext):
     await state.update_data(name=message.text)
-    await message.answer("📞 Enter your phone number:")
     await state.set_state(RentCarForm.phone)
+    await message.answer("📞 Enter your phone number:")
 
 
 @dp.message(RentCarForm.phone)
 async def process_phone(message: Message, state: FSMContext):
     await state.update_data(phone=message.text)
-    await message.answer("🏠 Enter your address:")
     await state.set_state(RentCarForm.address)
+    await message.answer("🏠 Enter your address:")
 
 
 @dp.message(RentCarForm.address)
 async def process_address(message: Message, state: FSMContext):
     await state.update_data(address=message.text)
-    await message.answer("🌆 Enter your town / city:")
     await state.set_state(RentCarForm.city)
+    await message.answer("🌆 Enter your town / city:")
 
 
 @dp.message(RentCarForm.dropoff_time)

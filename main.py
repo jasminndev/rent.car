@@ -9,6 +9,8 @@ from asgiref.sync import sync_to_async
 
 from bot.dispatcher import dp
 
+from bot.handlers import rent
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "root.settings")
 django.setup()
 
