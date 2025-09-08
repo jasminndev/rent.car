@@ -2,6 +2,7 @@ from aiogram import F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from bot.buttons import locations_keyboard, date_keyboard, time_keyboard, payment_keyboard
 from bot.dispatcher import dp
 from bot.states import RentCarForm
 
@@ -29,63 +30,112 @@ async def process_name(message: Message, state: FSMContext):
 
 
 @dp.message(RentCarForm.phone)
-async def process_city(message: Message, state: FSMContext):
+async def process_phone(message: Message, state: FSMContext):
     if not message.text.strip():
         await message.answer("Error: Phone number cannot be empty. Please enter your phone number:")
         return
+    await state.update_data(phone=message.text.strip())
+    await message.answer("🏠 Enter your address:")
+    await state.set_state(RentCarForm.address)
+
+
+@dp.message(RentCarForm.address)
+async def process_address(message: Message, state: FSMContext):
+    if not message.text.strip():
+        await message.answer("Error: Address cannot be empty. Please enter your address:")
+        return
+    await state.update_data(address=message.text.strip())
+    await message.answer("🌆 Enter your town/city:")
+    await state.set_state(RentCarForm.city)
+
+
+@dp.message(RentCarForm.city)
+async def process_city(message: Message, state: FSMContext):
+    if not message.text.strip():
+        await message.answer("Error: City cannot be empty. Please enter your town/city:")
+        return
     await state.update_data(city=message.text.strip())
-    await message.answer("📍 Enter pickup location:")
+    await message.answer("📍 Select pickup location:", reply_markup=locations_keyboard)
     await state.set_state(RentCarForm.pickup_location)
 
 
-@dp.message(RentCarForm.pickup_location)
-async def process_pickup_location(message: Message, state: FSMContext):
+@dp.callback_query(F.data.startswith("loc_"), state=[RentCarForm.pickup_location, RentCarForm.dropoff_location])
+async def process_location(callback: CallbackQuery, state: FSMContext):
+    location = callback.data.split("_")[1].capitalize()
+    current_state = await state.get_state()
+    if current_state == RentCarForm.pickup_location:
+        await state.update_data(pickup_location=location)
+        await callback.message.edit_text(f"📍 Pickup location selected: {location}")
+        await callback.message.answer("📅 Select pickup date:", reply_markup=date_keyboard)
+        await state.set_state(RentCarForm.pickup_date)
+    elif current_state == RentCarForm.dropoff_location:
+        await state.update_data(dropoff_location=location)
+        await callback.message.edit_text(f"📍 Dropoff location selected: {location}")
+        await callback.message.answer("📅 Select dropoff date:", reply_markup=date_keyboard)
+        await state.set_state(RentCarForm.dropoff_date)
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("date_"), state=[RentCarForm.pickup_date, RentCarForm.dropoff_date])
+async def process_date(callback: CallbackQuery, state: FSMContext):
+    date = callback.data.split("_")[1]
+    current_state = await state.get_state()
+    if current_state == RentCarForm.pickup_date:
+        await state.update_data(pickup_date=date)
+        await callback.message.edit_text(f"📅 Pickup date selected: {date}")
+        await callback.message.answer("⏰ Select pickup time:", reply_markup=time_keyboard)
+        await state.set_state(RentCarForm.pickup_time)
+    elif current_state == RentCarForm.dropoff_date:
+        await state.update_data(dropoff_date=date)
+        await callback.message.edit_text(f"📅 Dropoff date selected: {date}")
+        await callback.message.answer("⏰ Select dropoff time:", reply_markup=time_keyboard)
+        await state.set_state(RentCarForm.dropoff_time)
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("time_"), state=[RentCarForm.pickup_time, RentCarForm.dropoff_time])
+async def process_time(callback: CallbackQuery, state: FSMContext):
+    time = callback.data.split("_")[1]
+    current_state = await state.get_state()
+    if current_state == RentCarForm.pickup_time:
+        await state.update_data(pickup_time=time)
+        await callback.message.edit_text(f"⏰ Pickup time selected: {time}")
+        await callback.message.answer("📍 Select dropoff location:", reply_markup=locations_keyboard)
+        await state.set_state(RentCarForm.dropoff_location)
+    elif current_state == RentCarForm.dropoff_time:
+        await state.update_data(dropoff_time=time)
+        await callback.message.edit_text(f"⏰ Dropoff time selected: {time}")
+        await callback.message.answer("💰 Choose a payment method:", reply_markup=payment_keyboard)
+        await state.set_state(RentCarForm.payment_method)
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "pay_card", state=RentCarForm.payment_method)
+async def process_pay_card(callback: CallbackQuery, state: FSMContext):
+    await state.update_data(payment_method="Credit Card")
+    await callback.message.edit_text("💳 Enter card number:")
+    await state.set_state(RentCarForm.card_number)
+    await callback.answer()
+
+
+@dp.message(RentCarForm.card_number)
+async def process_card_number(message: Message, state: FSMContext):
     if not message.text.strip():
-        await message.answer("Error: Pickup location cannot be empty. Please enter pickup location:")
+        await message.answer("Error: Card number cannot be empty. Please enter card number:")
         return
-    await state.update_data(pickup_location=message.text.strip())
-    await message.answer("📅 Enter pickup date (YYYY-MM-DD):")
-    await state.set_state(RentCarForm.pickup_date)
+    await state.update_data(card_number=message.text.strip())
+    await message.answer("📅 Enter card expiry (MM/YY):")
+    await state.set_state(RentCarForm.card_expiry)
 
 
-@dp.message(RentCarForm.pickup_date)
-async def process_pickup_date(message: Message, state: FSMContext):
+@dp.message(RentCarForm.card_expiry)
+async def process_card_expiry(message: Message, state: FSMContext):
     if not message.text.strip():
-        await message.answer("Error: Pickup date cannot be empty. Please enter pickup date (YYYY-MM-DD):")
+        await message.answer("Error: Card expiry cannot be empty. Please enter card expiry (MM/YY):")
         return
-    await state.update_data(pickup_date=message.text.strip())
-    await message.answer("⏰ Enter pickup time (HH:MM):")
-    await state.set_state(RentCarForm.pickup_time)
-
-
-@dp.message(RentCarForm.pickup_time)
-async def process_pickup_time(message: Message, state: FSMContext):
-    if not message.text.strip():
-        await message.answer("Error: Pickup time cannot be empty. Please enter pickup time (HH:MM):")
-        return
-    await state.update_data(pickup_time=message.text.strip())
-    await message.answer("📍 Enter dropoff location:")
-    await state.set_state(RentCarForm.dropoff_location)
-
-
-@dp.message(RentCarForm.dropoff_location)
-async def process_dropoff_location(message: Message, state: FSMContext):
-    if not message.text.strip():
-        await message.answer("Error: Dropoff location cannot be empty. Please enter dropoff location:")
-        return
-    await state.update_data(dropoff_location=message.text.strip())
-    await message.answer("📅 Enter dropoff date (YYYY-MM-DD):")
-    await state.set_state(RentCarForm.dropoff_date)
-
-
-@dp.message(RentCarForm.dropoff_date)
-async def process_dropoff_date(message: Message, state: FSMContext):
-    if not message.text.strip():
-        await message.answer("Error: Dropoff date cannot be empty. Please enter dropoff date (YYYY-MM-DD):")
-        return
-    await state.update_data(dropoff_date=message.text.strip())
-    await message.answer("⏰ Enter dropoff time (HH:MM):")
-    await state.set_state(RentCarForm.dropoff_time)
+    await state.update_data(card_expiry=message.text.strip())
+    await message.answer("🔒 Enter card CVC:")
+    await state.set_state(RentCarForm.card_cvc)
 
 
 @dp.message(RentCarForm.card_cvc)
