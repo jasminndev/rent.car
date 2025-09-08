@@ -14,9 +14,9 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 locations_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="🛫 Airport", callback_data="loc_airport")],
-        [InlineKeyboardButton(text="🏙 Downtown", callback_data="loc_downtown")],
-        [InlineKeyboardButton(text="🏘 Suburb", callback_data="loc_suburb")],
+        [InlineKeyboardButton(text="🛫 Yunusobod", callback_data="loc_yunusabad")],
+        [InlineKeyboardButton(text="🏙 Chilonzor", callback_data="loc_chilonzor")],
+        [InlineKeyboardButton(text="🏘 Sergeli", callback_data="loc_sergeli")],
     ]
 )
 

@@ -131,3 +131,21 @@ class RentalOrder(Model):
 
     def __str__(self):
         return f"Order #{self.id} by {self.user}"
+
+
+class RentByBot(Model):
+    car = ForeignKey('apps.Car', on_delete=CASCADE, related_name='rent_by_bot')
+    name = CharField(max_length=255)
+    phone = CharField(max_length=50)
+    pickup_location = ForeignKey('apps.Location', on_delete=CASCADE, related_name='pickup_rents')
+    pickup_date = DateField()
+    pickup_time = TimeField()
+    dropoff_location = ForeignKey('apps.Location', on_delete=CASCADE, related_name='fropoff_rents')
+    dropoff_date = DateField()
+    dropoff_time = TimeField()
+    payment_method = CharField(max_length=50, default="cash")
+
+    created_at = DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} (Car {self.car_id})"

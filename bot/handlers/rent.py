@@ -2,7 +2,9 @@ from aiogram import F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
+from asgiref.sync import sync_to_async
 
+from apps.models import Car, Location, RentByBot
 from bot.buttons import locations_keyboard, date_keyboard, time_keyboard, payment_keyboard
 from bot.dispatcher import dp
 from bot.states import RentCarForm
@@ -102,17 +104,37 @@ async def process_time(callback: CallbackQuery, state: FSMContext):
 
 @dp.message(StateFilter(RentCarForm.payment_method))
 async def process_card_cvc(message: Message, state: FSMContext):
-    await state.update_data(card_cvc=message.text.strip())
     data = await state.get_data()
 
+    @sync_to_async
+    def save_rent(data):
+        car = Car.objects.get(id=data["car_id"])
+        pickup_location = Location.objects.get(name=data["pickup_location"])
+        dropoff_location = Location.objects.get(name=data["dropoff_location"])
+
+        return RentByBot.objects.create(
+            car=car,
+            name=data["name"],
+            phone=data["phone"],
+            pickup_location=pickup_location,
+            pickup_date=data["pickup_date"],
+            pickup_time=data["pickup_time"],
+            dropoff_location=dropoff_location,
+            dropoff_date=data["dropoff_date"],
+            dropoff_time=data["dropoff_time"],
+            payment_method="cash",  # or data.get("payment_method")
+        )
+
+    rent = await save_rent(data)
+
     summary = (
-        f"✅ Rental Summary\n\n"
-        f"👤 {data.get('name', 'N/A')}\n"
-        f"📞 {data.get('phone', 'N/A')}\n"
-        f"🚘 Car ID: {data.get('car_id', 'N/A')}\n"
-        f"📍 Pickup: {data.get('pickup_location', 'N/A')} on {data.get('pickup_date', 'N/A')} at {data.get('pickup_time', 'N/A')}\n"
-        f"📍 Dropoff: {data.get('dropoff_location', 'N/A')} on {data.get('dropoff_date', 'N/A')} at {data.get('dropoff_time', 'N/A')}\n\n"
-        f"💳 Payment: Done"
+        f"✅ Rental Saved!\n\n"
+        f"👤 {rent.name}\n"
+        f"📞 {rent.phone}\n"
+        f"🚘 Car: {rent.car}\n"
+        f"📍 Pickup: {rent.pickup_location} on {rent.pickup_date} at {rent.pickup_time}\n"
+        f"📍 Dropoff: {rent.dropoff_location} on {rent.dropoff_date} at {rent.dropoff_time}\n\n"
+        f"💳 Payment: {rent.payment_method}"
     )
 
     await message.answer(summary)
