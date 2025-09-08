@@ -80,8 +80,8 @@ async def _update(car: Car):
         f"⚙ Steering: {car_data['steering']}\n"
         f"⛽ Gasoline: {car_data['gasoline']}\n"
         f"💰 Price: ${car_data['price']}\n"
-        f"📝 Description: {car_data['description']}\n"
-        f"[View in bot]({link})"
+        f"📝 Description: {car_data['description']}\n\n"
+        f"[For more information]({link})"
     )
     if car_data['main_image_path']:
         media = InputMediaPhoto(

@@ -4,8 +4,6 @@ from aiogram.fsm.state import StatesGroup, State
 class RentCarForm(StatesGroup):
     name = State()
     phone = State()
-    address = State()
-    city = State()
 
     pickup_location = State()
     pickup_date = State()
@@ -20,6 +18,3 @@ class RentCarForm(StatesGroup):
     card_expiry = State()
     card_holder = State()
     card_cvc = State()
-
-    confirm = State()
-    car_data = State()
