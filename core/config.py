@@ -40,6 +40,11 @@ class EmailConfig:
 
 
 @dataclass
+class Payment:
+    PAYMENT_PROVIDER_TOKEN = os.getenv("PAYMENT_PROVIDER_TOKEN")
+
+
+@dataclass
 class Configuration:
     db = DatabaseConfig()
     redis = RedisConfig()

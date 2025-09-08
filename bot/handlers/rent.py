@@ -94,46 +94,14 @@ async def process_time(callback: CallbackQuery, state: FSMContext):
     elif current_state == RentCarForm.dropoff_time.state:
         await state.update_data(dropoff_time=time)
         await callback.message.edit_text(f"⏰ Dropoff time selected: {time}")
-        await callback.message.answer("💰 Choose a payment method:", reply_markup=payment_keyboard)
+        await callback.message.answer("💰 Payment", reply_markup=payment_keyboard)
         await state.set_state(RentCarForm.payment_method)
 
     await callback.answer()
 
 
-@dp.callback_query(F.data == "pay_card", StateFilter(RentCarForm.payment_method))
-async def process_pay_card(callback: CallbackQuery, state: FSMContext):
-    await state.update_data(payment_method="Credit Card")
-    await callback.message.edit_text("💳 Enter card number:")
-    await state.set_state(RentCarForm.card_number)
-    await callback.answer()
-
-
-@dp.message(StateFilter(RentCarForm.card_number))
-async def process_card_number(message: Message, state: FSMContext):
-    if not message.text.strip():
-        await message.answer("Error: Card number cannot be empty. Please enter card number:")
-        return
-    await state.update_data(card_number=message.text.strip())
-    await message.answer("📅 Enter card expiry (MM/YY):")
-    await state.set_state(RentCarForm.card_expiry)
-
-
-@dp.message(StateFilter(RentCarForm.card_expiry))
-async def process_card_expiry(message: Message, state: FSMContext):
-    if not message.text.strip():
-        await message.answer("Error: Card expiry cannot be empty. Please enter card expiry (MM/YY):")
-        return
-    await state.update_data(card_expiry=message.text.strip())
-    await message.answer("🔒 Enter card CVC:")
-    await state.set_state(RentCarForm.card_cvc)
-
-
-@dp.message(StateFilter(RentCarForm.card_cvc))
+@dp.message(StateFilter(RentCarForm.payment_method))
 async def process_card_cvc(message: Message, state: FSMContext):
-    if not message.text.strip():
-        await message.answer("Error: Card CVC cannot be empty. Please enter card CVC:")
-        return
-
     await state.update_data(card_cvc=message.text.strip())
     data = await state.get_data()
 
@@ -144,7 +112,7 @@ async def process_card_cvc(message: Message, state: FSMContext):
         f"🚘 Car ID: {data.get('car_id', 'N/A')}\n"
         f"📍 Pickup: {data.get('pickup_location', 'N/A')} on {data.get('pickup_date', 'N/A')} at {data.get('pickup_time', 'N/A')}\n"
         f"📍 Dropoff: {data.get('dropoff_location', 'N/A')} on {data.get('dropoff_date', 'N/A')} at {data.get('dropoff_time', 'N/A')}\n\n"
-        f"💳 Payment: {data.get('payment_method', 'N/A')} (Card ending {data.get('card_number', 'N/A')[-4:]})"
+        f"💳 Payment: Done"
     )
 
     await message.answer(summary)

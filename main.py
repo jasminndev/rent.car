@@ -4,12 +4,11 @@ import os
 import django
 from aiogram import Bot
 from aiogram.filters import CommandStart
-from aiogram.types import Message, InputMediaPhoto, FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InputMediaPhoto, FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton
 from asgiref.sync import sync_to_async
 
-from bot.dispatcher import dp
-
-from bot.handlers import rent
+from bot.handlers.rent import *
+from bot.handlers.payment import *
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "root.settings")
 django.setup()
