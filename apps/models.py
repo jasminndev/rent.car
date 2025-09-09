@@ -144,7 +144,6 @@ class RentByBot(Model):
     dropoff_date = DateField()
     dropoff_time = TimeField()
     payment_method = CharField(max_length=50, default="cash")
-
     created_at = DateTimeField(auto_now_add=True)
 
     def __str__(self):
