@@ -34,12 +34,12 @@ async def _send(car: Car):
     link = f"https://t.me/{conf.bot.BOT_USERNAME}?start=car_{car_data['id']}"
     caption = (
         f"🚗 **{car_data['name']}**\n"
-        f"📝 Description: {car_data['description']}\n"
         f"🗂 Category: {car_data['category']}\n"
         f"👥 Capacity: {car_data['capacity']}\n"
         f"⚙ Steering: {car_data['steering']}\n"
         f"⛽ Gasoline: {car_data['gasoline']}\n"
-        f"💰 Price: ${car_data['price']}\n\n"
+        f"💰 Price: {car_data['price']} sum\n"
+        f"📝 Description: {car_data['description']}\n\n"
         f"[For more information]({link})"
     )
     if car_data['main_image_path']:
@@ -79,7 +79,7 @@ async def _update(car: Car):
         f"👥 Capacity: {car_data['capacity']}\n"
         f"⚙ Steering: {car_data['steering']}\n"
         f"⛽ Gasoline: {car_data['gasoline']}\n"
-        f"💰 Price: ${car_data['price']}\n"
+        f"💰 Price: {car_data['price']} sum\n"
         f"📝 Description: {car_data['description']}\n\n"
         f"[For more information]({link})"
     )

@@ -1,3 +1,4 @@
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import KeyboardButton
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -10,11 +11,9 @@ def build_button(buttons: list[list[str]]) -> InlineKeyboardBuilder:
     return ikb
 
 
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
 locations_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="🛫 Yunusobod", callback_data="loc_yunusabad")],
+        [InlineKeyboardButton(text="🛫 Yunusobod", callback_data="loc_yunusobod")],
         [InlineKeyboardButton(text="🏙 Chilonzor", callback_data="loc_chilonzor")],
         [InlineKeyboardButton(text="🏘 Sergeli", callback_data="loc_sergeli")],
     ]
@@ -46,6 +45,6 @@ time_keyboard = InlineKeyboardMarkup(
 
 payment_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="💳 Invoice", callback_data="invoice")],
+        [InlineKeyboardButton(text="💳 Pay", callback_data="invoice")],
     ]
 )

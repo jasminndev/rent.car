@@ -140,7 +140,7 @@ class RentByBot(Model):
     pickup_location = ForeignKey('apps.Location', on_delete=CASCADE, related_name='pickup_rents')
     pickup_date = DateField()
     pickup_time = TimeField()
-    dropoff_location = ForeignKey('apps.Location', on_delete=CASCADE, related_name='fropoff_rents')
+    dropoff_location = ForeignKey('apps.Location', on_delete=CASCADE, related_name='dropoff_rents')
     dropoff_date = DateField()
     dropoff_time = TimeField()
     payment_method = CharField(max_length=50, default="cash")

@@ -1,5 +1,5 @@
 from aiogram import F
-from aiogram.types import CallbackQuery, LabeledPrice, PreCheckoutQuery, Message
+from aiogram.types import CallbackQuery, LabeledPrice, PreCheckoutQuery, Message, SuccessfulPayment
 from asgiref.sync import sync_to_async
 
 from apps.models import Car
@@ -36,11 +36,11 @@ async def pre_checkout(pre_checkout_query: PreCheckoutQuery):
     await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
 
-@dp.message(lambda m: m.content_type == "successful_payment")
+@dp.message(F.successful_payment)
 async def successful_payment(message: Message):
-    payment_info = message.successful_payment.to_python()
+    sp: SuccessfulPayment = message.successful_payment
     await message.answer(
         f"✅ Payment successful!\n"
-        f"💰 {payment_info['total_amount'] / 100} {payment_info['currency']}\n"
-        f"📦 Payload: {payment_info['invoice_payload']}"
+        f"💰 {sp.total_amount / 100} {sp.currency}\n"
+        f"📦 Payload: {sp.invoice_payload}"
     )

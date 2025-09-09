@@ -49,14 +49,14 @@ async def process_location(callback: CallbackQuery, state: FSMContext):
 
     if current_state == RentCarForm.pickup_location.state:
         await state.update_data(pickup_location=location)
-        await callback.message.edit_text(f"📍 Pickup location selected: {location}")
-        await callback.message.answer("📅 Select pickup date:", reply_markup=date_keyboard)
+        await callback.message.edit_text(f"📍 Pick up location selected: {location}")
+        await callback.message.answer("📅 Select pick up date:", reply_markup=date_keyboard)
         await state.set_state(RentCarForm.pickup_date)
 
     elif current_state == RentCarForm.dropoff_location.state:
         await state.update_data(dropoff_location=location)
-        await callback.message.edit_text(f"📍 Dropoff location selected: {location}")
-        await callback.message.answer("📅 Select dropoff date:", reply_markup=date_keyboard)
+        await callback.message.edit_text(f"📍 Drop off location selected: {location}")
+        await callback.message.answer("📅 Select drop off date:", reply_markup=date_keyboard)
         await state.set_state(RentCarForm.dropoff_date)
 
     await callback.answer()
@@ -69,14 +69,14 @@ async def process_date(callback: CallbackQuery, state: FSMContext):
 
     if current_state == RentCarForm.pickup_date.state:
         await state.update_data(pickup_date=date)
-        await callback.message.edit_text(f"📅 Pickup date selected: {date}")
-        await callback.message.answer("⏰ Select pickup time:", reply_markup=time_keyboard)
+        await callback.message.edit_text(f"📅 Pick up date selected: {date}")
+        await callback.message.answer("⏰ Select pick up time:", reply_markup=time_keyboard)
         await state.set_state(RentCarForm.pickup_time)
 
     elif current_state == RentCarForm.dropoff_date.state:
         await state.update_data(dropoff_date=date)
-        await callback.message.edit_text(f"📅 Dropoff date selected: {date}")
-        await callback.message.answer("⏰ Select dropoff time:", reply_markup=time_keyboard)
+        await callback.message.edit_text(f"📅 Drop off date selected: {date}")
+        await callback.message.answer("⏰ Select drop off time:", reply_markup=time_keyboard)
         await state.set_state(RentCarForm.dropoff_time)
 
     await callback.answer()
@@ -89,13 +89,13 @@ async def process_time(callback: CallbackQuery, state: FSMContext):
 
     if current_state == RentCarForm.pickup_time.state:
         await state.update_data(pickup_time=time)
-        await callback.message.edit_text(f"⏰ Pickup time selected: {time}")
-        await callback.message.answer("📍 Select dropoff location:", reply_markup=locations_keyboard)
+        await callback.message.edit_text(f"⏰ Pick up time selected: {time}")
+        await callback.message.answer("📍 Select drop off location:", reply_markup=locations_keyboard)
         await state.set_state(RentCarForm.dropoff_location)
 
     elif current_state == RentCarForm.dropoff_time.state:
         await state.update_data(dropoff_time=time)
-        await callback.message.edit_text(f"⏰ Dropoff time selected: {time}")
+        await callback.message.edit_text(f"⏰ Drop off time selected: {time}")
         await callback.message.answer("💰 Payment", reply_markup=payment_keyboard)
         await state.set_state(RentCarForm.payment_method)
 
@@ -103,7 +103,7 @@ async def process_time(callback: CallbackQuery, state: FSMContext):
 
 
 @dp.message(StateFilter(RentCarForm.payment_method))
-async def process_card_cvc(message: Message, state: FSMContext):
+async def process_save_rent(message: Message, state: FSMContext):
     data = await state.get_data()
 
     @sync_to_async
@@ -122,7 +122,8 @@ async def process_card_cvc(message: Message, state: FSMContext):
             dropoff_location=dropoff_location,
             dropoff_date=data["dropoff_date"],
             dropoff_time=data["dropoff_time"],
-            payment_method="cash",  # or data.get("payment_method")
+            payment_method=data["payment_method"],
+            user=message.from_user.id,
         )
 
     rent = await save_rent(data)
@@ -132,8 +133,8 @@ async def process_card_cvc(message: Message, state: FSMContext):
         f"👤 {rent.name}\n"
         f"📞 {rent.phone}\n"
         f"🚘 Car: {rent.car}\n"
-        f"📍 Pickup: {rent.pickup_location} on {rent.pickup_date} at {rent.pickup_time}\n"
-        f"📍 Dropoff: {rent.dropoff_location} on {rent.dropoff_date} at {rent.dropoff_time}\n\n"
+        f"📍 Pick up: {rent.pickup_location} on {rent.pickup_date} at {rent.pickup_time}\n"
+        f"📍 Drop off: {rent.dropoff_location} on {rent.dropoff_date} at {rent.dropoff_time}\n\n"
         f"💳 Payment: {rent.payment_method}"
     )
 
