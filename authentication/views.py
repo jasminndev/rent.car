@@ -47,31 +47,6 @@ class VerifyCodeGenericAPIView(GenericAPIView):
         return Response(UserModelSerializer(user).data, status=HTTPStatus.CREATED)
 
 
-# @extend_schema(tags=['auth'])
-# class VerifyCodeGenericAPIView(GenericAPIView):
-#     serializer_class = VerifyCodeSerializer
-#     permission_classes = [AllowAny]
-#
-#     def post(self, request):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         user_data = serializer.context.get("user_data")
-#
-#         referral_code = user_data.pop("referral_code", None)
-#
-#         user = User.objects.create(**user_data)
-#
-#         if referral_code:
-#             try:
-#                 referrer = User.objects.get(referral_code=referral_code)
-#                 user.referred_by = referrer
-#                 user.save(update_fields=["referred_by"])
-#             except User.DoesNotExist:
-#                 pass
-#
-#         return Response(UserModelSerializer(user).data, status=HTTPStatus.CREATED)
-
-
 @extend_schema(tags=['auth'])
 class CustomTokenObtainPairView(TokenObtainPairView):
 

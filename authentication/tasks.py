@@ -10,6 +10,7 @@ def send_code_email(user_email: dict, code):
     subject = "Email Verification"
     from_email = EMAIL_HOST_USER
     to = [user_email.get('email')]
+    print("Sending to:", to)
 
     context = {
         "code": code,
