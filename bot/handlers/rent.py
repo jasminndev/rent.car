@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from aiogram import F
 from aiogram.filters import StateFilter
@@ -19,8 +19,11 @@ def validate_date(date_str: str) -> bool:
     if not DATE_PATTERN.match(date_str):
         return False
     try:
-        datetime.strptime(date_str, "%Y-%m-%d")
-        return True
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+        today = datetime.today().date()
+        one_year_later = today + timedelta(days=365)
+
+        return today <= date_obj <= one_year_later
     except ValueError:
         return False
 
