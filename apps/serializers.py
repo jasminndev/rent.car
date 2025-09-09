@@ -238,6 +238,6 @@ class RentByBotModelSerializer(ModelSerializer):
     class Meta:
         model = RentByBot
         fields = (
-        "id", 'name', 'phone', 'pickup_location', 'pickup_date', 'pickup_time', 'dropoff_location', 'dropoff_date',
-        'dropoff_time', 'payment_method', 'car')
+            "id", 'name', 'phone', 'pickup_location', 'pickup_date', 'pickup_time', 'dropoff_location', 'dropoff_date',
+            'dropoff_time', 'payment_method', 'car')
         read_only_fields = ("id", 'created_at')

@@ -10,7 +10,7 @@ from bot.buttons import locations_keyboard, payment_keyboard
 from bot.dispatcher import dp
 from bot.states import RentCarForm
 
-DATE_PATTERN = re.compile(r"^\d{2}:\d{2}:\d{4}$")
+DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 TIME_PATTERN = re.compile(r"^\d{2}:\d{2}$")
 PHONE_PATTERN = re.compile(r"^\+?\d{7,15}$")
 
@@ -19,7 +19,7 @@ def validate_date(date_str: str) -> bool:
     if not DATE_PATTERN.match(date_str):
         return False
     try:
-        datetime.strptime(date_str, "%d:%m:%Y")
+        datetime.strptime(date_str, "%Y-%m-%d")
         return True
     except ValueError:
         return False
@@ -77,13 +77,13 @@ async def process_location(callback: CallbackQuery, state: FSMContext):
     if current_state == RentCarForm.pickup_location.state:
         await state.update_data(pickup_location=location)
         await callback.message.edit_text(f"📍 Pick up location selected: {location}")
-        await callback.message.answer("📅 Enter pick up date (DD:MM:YYYY):")
+        await callback.message.answer("📅 Enter pick up date (YYYY-MM-DD):")
         await state.set_state(RentCarForm.pickup_date)
 
     elif current_state == RentCarForm.dropoff_location.state:
         await state.update_data(dropoff_location=location)
         await callback.message.edit_text(f"📍 Drop off location selected: {location}")
-        await callback.message.answer("📅 Enter drop off date (DD:MM:YYYY):")
+        await callback.message.answer("📅 Enter drop off date (YYYY-MM-DD):")
         await state.set_state(RentCarForm.dropoff_date)
 
     await callback.answer()
@@ -92,7 +92,7 @@ async def process_location(callback: CallbackQuery, state: FSMContext):
 @dp.message(StateFilter(RentCarForm.pickup_date))
 async def process_pickup_date(message: Message, state: FSMContext):
     if not validate_date(message.text.strip()):
-        await message.answer("❌ Invalid format! Enter pick up date in format DD:MM:YYYY")
+        await message.answer("❌ Invalid format! Enter pick up date in format YYYY-MM-DD")
         return
     await state.update_data(pickup_date=message.text.strip())
     await message.answer("⏰ Enter pick up time (HH:MM):")
@@ -112,7 +112,7 @@ async def process_pickup_time(message: Message, state: FSMContext):
 @dp.message(StateFilter(RentCarForm.dropoff_date))
 async def process_dropoff_date(message: Message, state: FSMContext):
     if not validate_date(message.text.strip()):
-        await message.answer("❌ Invalid format! Enter drop off date in format DD:MM:YYYY")
+        await message.answer("❌ Invalid format! Enter drop off date in format YYYY-MM-DD")
         return
     await state.update_data(dropoff_date=message.text.strip())
     await message.answer("⏰ Enter drop off time (HH:MM):")

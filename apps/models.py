@@ -146,10 +146,11 @@ class RentByBot(Model):
     payment_method = CharField(max_length=50, default="cash")
     created_at = DateTimeField(auto_now_add=True)
     tg_user_id = BigIntegerField()
-    payment_status = CharField(max_length=20, default="pending", choices=[("pending","pending"),("paid","paid"),("failed","failed")])
+    payment_status = CharField(max_length=20, default="pending",
+                               choices=[("pending", "pending"), ("paid", "paid"), ("failed", "failed")])
     paid_amount = IntegerField(blank=True, null=True)
     paid_currency = CharField(max_length=10, blank=True, null=True)
 
 
 def __str__(self):
-        return f"{self.name} (Car {self.car_id})"
+    return f"{self.name} (Car {self.car_id})"
