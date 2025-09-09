@@ -45,6 +45,7 @@ time_keyboard = InlineKeyboardMarkup(
 
 payment_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="💳 Pay", callback_data="invoice")],
+        [InlineKeyboardButton(text="💵 Cash", callback_data="payment_cash")],
+        [InlineKeyboardButton(text="💳 Card", callback_data="payment_card")],
     ]
 )

@@ -145,6 +145,7 @@ class RentByBot(Model):
     dropoff_time = TimeField()
     payment_method = CharField(max_length=50, default="cash")
     created_at = DateTimeField(auto_now_add=True)
+    tg_user_id = BigIntegerField()
 
     def __str__(self):
         return f"{self.name} (Car {self.car_id})"

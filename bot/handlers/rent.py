@@ -123,7 +123,7 @@ async def process_save_rent(message: Message, state: FSMContext):
             dropoff_date=data["dropoff_date"],
             dropoff_time=data["dropoff_time"],
             payment_method=data["payment_method"],
-            user=message.from_user.id,
+            tg_user_id=message.from_user.id
         )
 
     rent = await save_rent(data)

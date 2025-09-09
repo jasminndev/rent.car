@@ -17,4 +17,4 @@ class RentCarForm(StatesGroup):
     card_number = State()
     card_expiry = State()
     card_holder = State()
-    card_cvc = State()
+    confirm = State()
