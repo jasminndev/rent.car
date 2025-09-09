@@ -14,9 +14,12 @@ from root.settings import redis
 
 
 class UserModelSerializer(ModelSerializer):
+    referral_code = CharField(read_only=True)
+    referred_by_code = CharField(write_only=True, required=False)
+
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'avatar', 'password',)
+        fields = ('first_name', 'last_name', 'email', 'avatar', 'password', "referral_code", "referred_by_code")
         read_only_fields = ('id', 'date_joined', 'updated_at')
 
     def validate_email(self, value):

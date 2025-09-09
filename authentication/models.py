@@ -1,6 +1,8 @@
+import uuid
+
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager, AbstractUser
-from django.db.models import ImageField, Model, DateTimeField, ForeignKey, CASCADE
+from django.db.models import ImageField, Model, DateTimeField, ForeignKey, CASCADE, SET_NULL
 from django.db.models.fields import CharField, EmailField
 
 from apps.models import Car
@@ -46,6 +48,15 @@ class User(AbstractUser):
     updated_at = DateTimeField(auto_now=True)
     objects = CustomerUser()
     username = None
+    referral_code = CharField(max_length=10, unique=True, blank=True)
+    referred_by = ForeignKey(
+        "self", null=True, blank=True, on_delete=SET_NULL, related_name="referrals"
+    )
+
+    def save(self, *args, **kwargs):
+        if not self.referral_code:
+            self.referral_code = str(uuid.uuid4())[:8].upper()
+        super().save(*args, **kwargs)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

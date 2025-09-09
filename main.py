@@ -1,4 +1,3 @@
-import asyncio
 import os
 
 import django
@@ -12,6 +11,7 @@ from aiogram.types import InputMediaPhoto, FSInputFile, InlineKeyboardMarkup, In
 
 from bot.handlers.rent import *
 from bot.handlers.payment import *
+from apps.signals import *
 
 from apps.models import Car
 from core.config import conf

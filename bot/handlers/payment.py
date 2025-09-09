@@ -6,9 +6,9 @@ from asgiref.sync import sync_to_async
 
 from apps.models import Car, RentByBot, Location
 from bot.dispatcher import dp
+from bot.loader import bot
 from bot.states import RentCarForm
 from core.config import Payment
-from main import bot
 
 PAYMENT_PROVIDER_TOKEN = Payment.PAYMENT_PROVIDER_TOKEN
 
