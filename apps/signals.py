@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from apps.models import Car, RentByBot
+from bot.buttons import keyboard
 from bot.loader import bot
 from bot.sender import send_car_to_channel, update_car_post
 
@@ -38,15 +39,10 @@ def notify_users_about_car(sender, instance: Car, created, **kwargs):
                 f"📌 {car.name}\n"
                 f"💰 Price: {car.price}\n"
                 f"⚙️ Details: {car.description or 'No details'}"
-                f"🗂 Category: {car.category}\n"
-                f"👥 Capacity: {car.capacity}\n"
-                f"⚙ Steering: {car.steering}\n"
-                f"⛽ Gasoline: {car.gasoline}\n"
-                f"💰 Price: {car.price} sum\n"
-                f"📝 Description: {car.description or 'No details'}"
             )
+
             for user_id in user_ids:
                 try:
-                    asyncio.run(bot.send_message(chat_id=user_id, text=text))
+                    asyncio.run(bot.send_message(chat_id=user_id, text=text, reply_markup=keyboard))
                 except Exception as e:
                     print(f"Error sending notification: {e}")
