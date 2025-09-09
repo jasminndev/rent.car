@@ -17,14 +17,14 @@ payment_keyboard = InlineKeyboardMarkup(
     ]
 )
 
-BOT_USERNAME = BotConfig.BOT_USERNAME
+CHANNEL_USERNAME = BotConfig.CHANNEL_USERNAME
 
 keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
         [
             InlineKeyboardButton(
                 text="See in channel",
-                url=BOT_USERNAME
+                url=CHANNEL_USERNAME
             )
         ]
     ]

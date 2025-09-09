@@ -35,7 +35,7 @@ def notify_users_about_car(sender, instance: Car, created, **kwargs):
 
         if user_ids:
             text = (
-                f"🚘 A car similar to what you ordered is available again!\n\n"
+                f"🚘 A similar car that you ordered before is available again!\n\n"
                 f"📌 {car.name}\n"
                 f"💰 Price: {car.price}\n"
                 f"⚙️ Details: {car.description or 'No details'}"
