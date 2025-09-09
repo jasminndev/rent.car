@@ -53,13 +53,13 @@ class User(AbstractUser):
         "self", null=True, blank=True, on_delete=SET_NULL, related_name="referrals"
     )
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
     def save(self, *args, **kwargs):
         if not self.referral_code:
             self.referral_code = str(uuid.uuid4())[:8].upper()
         super().save(*args, **kwargs)
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
 
 
 class Wishlist(Model):

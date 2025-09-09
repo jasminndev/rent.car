@@ -141,8 +141,8 @@ UNFOLD = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=20),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=20),
 }
 
 CKEDITOR_CONFIGS = {
@@ -160,18 +160,18 @@ CKEDITOR_CONFIGS = {
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
-redis = Redis.from_url(RedisConfig.REDIS_URL, decode_responses=True)
+redis = Redis.from_url(RedisConfig.CELERY_BROKER_URL, decode_responses=True)
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = EmailConfig.EMAIL_USER
 EMAIL_HOST_PASSWORD = EmailConfig.EMAIL_PASSWORD
 
-CELERY_BROKER_URL = RedisConfig.REDIS_URL
+CELERY_BROKER_URL = RedisConfig.CELERY_BROKER_URL
 
-CELERY_RESULT_BACKEND = RedisConfig.REDIS_URL
+CELERY_RESULT_BACKEND = RedisConfig.CELERY_BROKER_URL
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'

@@ -21,7 +21,7 @@ class DatabaseConfig:
 
 @dataclass
 class RedisConfig:
-    REDIS_URL: str = os.getenv("REDIS_URL")
+    CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL")
 
 
 @dataclass
