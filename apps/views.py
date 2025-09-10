@@ -1,4 +1,6 @@
-from django.db.models import Count
+from itertools import chain
+
+from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework.filters import SearchFilter
@@ -9,10 +11,11 @@ from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
 from apps.filter import CarFilter
-from apps.models import Car, Category, Review, CarImages, RentalOrder, RentalInfo, Region, District
+from apps.models import Car, Category, Review, CarImages, RentalOrder, Region, District
 from apps.serializers import CarModelSerializer, CategoryModelSerializer, ReviewModelSerializer, \
     ReviewUpdateModelSerializer, CarImagesModelSerializer, RentalOrderSerializer, RegionModelSerializer, \
     DistrictModelSerializer, RecentTransactionSerializer
+from .models import RentalInfo, RentByBot
 
 
 ########################################## CATEGORY ##############################################
@@ -88,24 +91,51 @@ class CarUpdateAPIView(UpdateAPIView):
 ########################################## STATISTICS ##############################################
 @extend_schema(tags=['top-5-cars'])
 class Top5CarsListAPIView(APIView):
-    serializer_class = CarModelSerializer
-    queryset = Car.objects.all()
-
     def get(self, request):
-        top_cars = (
+        web_orders = (
             RentalInfo.objects
             .values('car__id', 'car__name', 'car__category__name')
             .annotate(rental_count=Count('id'))
-            .order_by('-rental_count')[:5]
         )
+
+        bot_orders = (
+            RentByBot.objects
+            .values('car__id', 'car__name', 'car__category__name')
+            .annotate(rental_count=Count('id'))
+        )
+
+        combined = {}
+        for order in list(web_orders) + list(bot_orders):
+            key = order['car__id']
+            if key not in combined:
+                combined[key] = {
+                    'car__id': order['car__id'],
+                    'car__name': order['car__name'],
+                    'car__category__name': order['car__category__name'],
+                    'rental_count': 0
+                }
+            combined[key]['rental_count'] += order['rental_count']
+
+        top_cars = sorted(combined.values(), key=lambda x: x['rental_count'], reverse=True)[:5]
+
         return Response(top_cars)
 
 
 @extend_schema(tags=['recent-transactions'])
 class RecentTransactionsAPIView(APIView):
     def get(self, request):
-        transactions = RentalInfo.objects.all().order_by("-pickup_date", "-pickup_time")[:5]
-        serializer = RecentTransactionSerializer(transactions, many=True)
+        web_transactions = RentalInfo.objects.all()
+        bot_transactions = RentByBot.objects.all()
+
+        combined = sorted(
+            chain(web_transactions, bot_transactions),
+            key=lambda x: (x.pickup_date, x.pickup_time),
+            reverse=True
+        )
+
+        recent = combined[:5]
+
+        serializer = RecentTransactionSerializer(recent, many=True)
         return Response(serializer.data)
 
 
