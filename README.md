@@ -2,7 +2,7 @@
 
 ## 🇬🇧 English
 
-####  Welcome to RentCar, a dynamic and innovative car rental platform that seamlessly integrates a Django REST Framework backend with a powerful Telegram bot, all unified by a single shared PostgreSQL database. Whether you're renting a car through the web or chatting with our bot, RentCar delivers a smooth, modern, and user-friendly experience.
+#### Welcome to RentCar, a dynamic and innovative car rental platform that seamlessly integrates a Django REST Framework backend with a powerful Telegram bot, all unified by a single shared PostgreSQL database. Whether you're renting a car through the web or chatting with our bot, RentCar delivers a smooth, modern, and user-friendly experience.
 
 ### 🌟 Project Overview
 
@@ -108,9 +108,13 @@ pip install -r requirements.txt
 
 ##### Configure PostgreSQL and update database settings in settings.py.
 
+---
+
 #### Set up Celery for async tasks.
 
 ##### Add your Telegram Bot Token and channel details.
+
+---
 
 #### Run the Application:
 
