@@ -1,10 +1,12 @@
 # 🚘 RentCar: Your Ultimate Car Rental Platform 🚘
 
-### Welcome to RentCar, a dynamic and innovative car rental platform that seamlessly integrates a Django REST Framework backend with a powerful Telegram bot, all unified by a single shared PostgreSQL database. Whether you're renting a car through the web or chatting with our bot, RentCar delivers a smooth, modern, and user-friendly experience.
+## 🇬🇧 English
+
+####  Welcome to RentCar, a dynamic and innovative car rental platform that seamlessly integrates a Django REST Framework backend with a powerful Telegram bot, all unified by a single shared PostgreSQL database. Whether you're renting a car through the web or chatting with our bot, RentCar delivers a smooth, modern, and user-friendly experience.
 
 ### 🌟 Project Overview
 
-### RentCar is designed to simplify the car rental process by combining a robust web API with an interactive Telegram bot. From browsing available cars to completing a rental, users can interact with the platform through multiple channels, while admins enjoy full control over the system's features. The platform is built for scalability, real-time updates, and a delightful user experience.
+#### RentCar is designed to simplify the car rental process by combining a robust web API with an interactive Telegram bot. From browsing available cars to completing a rental, users can interact with the platform through multiple channels, while admins enjoy full control over the system's features. The platform is built for scalability, real-time updates, and a delightful user experience.
 
 --- 
 
@@ -12,13 +14,13 @@
 
 #### User Authentication
 
-###### Secure Registration & Login: Users can sign up and log in via email with JWT-based authentication.
+##### Secure Registration & Login: Users can sign up and log in via email with JWT-based authentication.
 
-###### Email Verification: Powered by Celery for asynchronous email delivery to ensure a smooth onboarding process.
+##### Email Verification: Powered by Celery for asynchronous email delivery to ensure a smooth onboarding process.
 
 ---
 
-#### Car Management
+#### 🚙 Car Management
 
 ##### Admin Control: Admins can create, update, or delete cars via the Django REST API.
 
@@ -26,13 +28,13 @@
 
 ---
 
-#### Categories, Regions, & Districts
+#### 🌇 Categories, Regions, & Districts
 
 ##### Full CRUD Operations: Admins can manage car categories, regions, and districts through intuitive API endpoints, ensuring organized and localized car listings.
 
 ---
 
-#### Telegram Bot Integration
+#### 🤖 Telegram Bot Integration
 
 ##### Interactive Experience: Each car post in the Telegram channel includes a "More Information" button that redirects users to the bot.
 
@@ -42,7 +44,7 @@
 
 ---
 
-#### Rental Orders
+#### 🚗 Rental Orders
 
 ##### Unified System: Rentals initiated via the web or bot are stored in a single, cohesive system for streamlined management.
 
@@ -50,23 +52,23 @@
 
 --- 
 
-#### Wishlist
+#### ❤️ Wishlist
 
 ##### Save Favorites: Users can add cars to their wishlist for quick access later, enhancing the browsing experience.
 
 ---
 
-#### Reviews
+#### 💬 Reviews
 
 ##### User Feedback: Customers can leave reviews for cars, helping others make informed rental decisions.
 
 ---
 
-#### Payments
+#### 💸 Payments
 
 ##### Flexible Options: Pay with cash at pickup or use secure card payments directly within the Telegram bot.
 
-#####Seamless Integration: Card payments are processed efficiently, ensuring a hassle-free transaction.
+##### Seamless Integration: Card payments are processed efficiently, ensuring a hassle-free transaction.
 
 ---
 
