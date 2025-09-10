@@ -100,7 +100,6 @@ class RentalInfo(Model):
     dropoff_location = ForeignKey('apps.Location', on_delete=CASCADE, related_name='dropoff_locations')
     dropoff_date = DateField()
     dropoff_time = TimeField()
-    source = CharField(max_length=10, choices=(('web', 'Web'), ('bot', 'Bot')), default='web')
 
     def __str__(self):
         return f"{self.car} | {self.pickup_location} → {self.dropoff_location}"
