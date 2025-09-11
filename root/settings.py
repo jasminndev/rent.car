@@ -125,7 +125,7 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Rent Car API',
     'DESCRIPTION': 'Rent Car',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': Falsestring,
+    'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
 }
 
