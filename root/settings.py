@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-kwqb-=woflhzrcsi*jknu9rx6#f5#ik#8jk6r8nko6v%9k@l3x'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -125,7 +125,7 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Rent Car API',
     'DESCRIPTION': 'Rent Car',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    'SERVE_INCLUDE_SCHEMA': Falsestring,
     'COMPONENT_SPLIT_REQUEST': True,
 }
 

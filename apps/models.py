@@ -14,7 +14,7 @@ class District(Model):
 
 
 class Category(Model):
-    name = CharField(max_length=50, db_index=True)
+    name = CharField(max_length=50, db_index=True, unique=True)
     car_amount = PositiveIntegerField(default=0)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
