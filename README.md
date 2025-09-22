@@ -164,6 +164,6 @@ python manage.py runserver
 
 **Made with 🧡 by Jasmina Ochildiyeva**
 
-[🔗 My GitHub profile](https://github.com/itsjasminn)
+[🔗 My GitHub profile](https://github.com/jasminndev)
 
-[📂 RentCar Repository](https://github.com/itsjasminn/RentCar)
+[📂 RentCar Repository](https://github.com/jasminndev/RentCar)
